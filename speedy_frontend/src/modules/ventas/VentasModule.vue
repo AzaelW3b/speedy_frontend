@@ -15,14 +15,14 @@
 
       <q-table
         color="primary"
-        :rows="productos"
+        :rows="ventas"
         :columns="columns"
         :filter="buscar"
       >
       <template v-slot:body-cell-acciones="props">
           <q-td>
             <q-btn
-              @click="productoEditarId(props.row._id)"
+              @click="ventaEditarId(props.row._id)"
               flat
               color="dark"
               icon="edit"
@@ -30,7 +30,7 @@
               <q-tooltip>{{ `Editar al cliente ${props.row.nombreProducto}` }}</q-tooltip>
             </q-btn>
             <q-btn
-              @click="confirmarEliminarProducto(props.row)"
+              @click="confirmarEliminarVenta(props.row)"
               flat
               color="negative"
               icon="delete"
@@ -40,7 +40,7 @@
           </q-td>
         </template>
       </q-table>
-      <ModalProductos ref="modalProductos"/>
+      <ModalVentas ref="modalVentas"/>
     </div>
   </q-layout>
 </template>
@@ -49,38 +49,45 @@
 import { ref } from 'vue'
 import { useQuasar } from 'quasar'
 import { storeToRefs } from 'pinia'
-import { useProductosStore } from 'src/stores/productos'
-import ModalProductos from 'src/components/productos/ModalProductos.vue'
+import { useVentasStore } from 'src/stores/ventas'
+import ModalVentas from 'src/components/ventas/ModalVentas.vue'
 
-const useProducto = useProductosStore()
-const { obtenerProductosId, eliminarProductos } = useProducto
-const { productos } = storeToRefs(useProducto)
+const useVenta = useVentasStore()
+const { obtenerVentasId, eliminarVentas } = useVenta
+const { ventas } = storeToRefs(useVenta)
 
 const columns = [
   {
     name: 'cliente',
     label: 'Cliente',
-    field: 'cliente',
+    field: row => row?.cliente?.label,
     align: 'left',
     sortable: true
   },
   {
     name: 'productos',
     label: 'Total de productos comprados',
-    field: 'productos',
+    field: row => row?.productos?.reduce((suma, producto) => suma + producto.cantidad, 0),
     align: 'left',
     sortable: true
   },
   {
     name: 'total',
-    label: 'Total',
+    label: 'Total del compra',
     field: 'total',
     align: 'left',
     sortable: true
   },
   {
+    name: 'cashback',
+    label: 'Dinero recuperado del cliente',
+    field: 'cashback',
+    align: 'left',
+    sortable: true
+  },
+  {
     name: 'fecha',
-    label: 'Fecha',
+    label: 'Fecha de compra',
     field: 'fecha',
     align: 'left',
     sortable: true
@@ -95,26 +102,26 @@ const columns = [
 ]
 
 // const modelEntrevista = ref(null)
-const modalProductos = ref(null)
+const modalVentas = ref(null)
 const buscar = ref('')
 const notificacion = useQuasar()
 
 const nuevaVenta = () => {
-  modalProductos.value.abrir(true)
+  modalVentas.value.abrir(true)
 }
-const productoEditarId = (id) => {
-  obtenerProductosId(id)
-  modalProductos.value.abrir(false)
+const ventaEditarId = (id) => {
+  obtenerVentasId(id)
+  modalVentas.value.abrir(false)
 }
 
-const confirmarEliminarProducto = (producto) => {
+const confirmarEliminarVenta = (venta) => {
   notificacion.dialog({
-    title: `¿Deseas eliminar el producto ${producto.nombreProducto}?`,
-    message: 'Una vez le des en "ok" no se podrá recuperar el producto',
+    title: '¿Deseas eliminar la venta?',
+    message: 'Una vez le des en "ok" no se podrá recuperar la venta',
     cancel: true,
     persistent: true
   }).onOk(() => {
-    eliminarProductos(producto._id)
+    eliminarVentas(venta._id)
   }).onCancel(() => {
     console.log('cancelando.....')
   })
