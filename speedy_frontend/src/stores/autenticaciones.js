@@ -1,23 +1,42 @@
 import { defineStore } from 'pinia'
-import { apiUsuarios } from 'src/boot/axiosUsuarios'
+import { api } from 'src/boot/axios'
 import { ref } from 'vue'
 // import { notificacion } from 'src/helpers/mensajes'
 
 export const useAutenticacionStore = defineStore('autenticaciones', () => {
   const usuarioAutenticado = ref(null)
   const isLogin = ref(false)
-  const idPortal = ref(0)
+  const isAdmin = ref(0)
 
+  // iniciar sesion usuario administrador
   const iniciarSesion = async (usuario) => {
+    console.log('empleado speedy')
     try {
-      const { data } = await apiUsuarios.post('/usuarios/login', usuario)
-      // autenticarUsuario()
-      idPortal.value = data.idPortal
+      const { data } = await api.post('/usuarios/login', usuario)
+      console.log(data)
       isLogin.value = true
+      isAdmin.value = data.isAdmin
       localStorage.setItem('token', data.token)
-      localStorage.setItem('idPortal', data.idPortal)
+      localStorage.setItem('isAdmin', data.isAdmin)
     } catch (error) {
-    //   notificacion('negative', error.response.data.msg)
+      // notificacion('negative', error.response.data.msg)
+      console.log(error.response.data.msg)
+    }
+  }
+
+  // iniciar sesion como cliente
+  const iniciarSesionCliente = async (usuario) => {
+    console.log('cliente')
+    try {
+      const { data } = await api.post('/clientes/login', usuario)
+      isLogin.value = true
+      isAdmin.value = data.isAdmin
+      console.log('xd', isAdmin.value)
+      localStorage.setItem('token', data.token)
+      localStorage.setItem('isAdmin', data.isAdmin)
+      console.log('token: ', data)
+    } catch (error) {
+      console.log(error.response.data.msg)
     }
   }
 
@@ -26,9 +45,10 @@ export const useAutenticacionStore = defineStore('autenticaciones', () => {
     try {
       usuarioAutenticado.value = null
       localStorage.removeItem('token')
-      localStorage.removeItem('idPortal')
+      localStorage.removeItem('isAdmin')
+
       isLogin.value = false
-      idPortal.value = 0
+      isAdmin.value = 0
     } catch (error) {
       console.log(error)
     }
@@ -50,11 +70,19 @@ export const useAutenticacionStore = defineStore('autenticaciones', () => {
     }
 
     try {
-      idPortal.value = parseInt(localStorage.getItem('idPortal'))
       isLogin.value = true
+      isAdmin.value = parseInt(localStorage.getItem('isAdmin'))
 
-      const { data } = await apiUsuarios.get('/usuarios/perfil', configuracion)
-      usuarioAutenticado.value = { ...data }
+      console.log(typeof isAdmin.value)
+      console.log(isAdmin.value)
+
+      if (isAdmin.value === 1) {
+        const { data } = await api.get('/usuarios/perfil', configuracion)
+        usuarioAutenticado.value = { ...data }
+      } else {
+        const { data } = await api.get('/clientes/perfil', configuracion)
+        usuarioAutenticado.value = { ...data }
+      }
     } catch (error) {
       console.log(error.response.msg)
     }
@@ -64,8 +92,9 @@ export const useAutenticacionStore = defineStore('autenticaciones', () => {
     iniciarSesion,
     cerrarSesion,
     autenticarUsuario,
+    iniciarSesionCliente,
     usuarioAutenticado,
-    idPortal,
-    isLogin
+    isLogin,
+    isAdmin
   }
 })

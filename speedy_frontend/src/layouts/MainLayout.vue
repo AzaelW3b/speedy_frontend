@@ -5,16 +5,13 @@
         <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
 
         <q-toolbar-title>
-          <!-- <q-avatar class="logo-inicio">
-          </q-avatar> -->
-          {{ 'Azael Garcia Jaimes' }}
+          {{ usuarioAutenticado?.usuario?.nombreUsuario || usuarioAutenticado?.nombreCliente }}
         </q-toolbar-title>
-        <q-btn flat @click="logout"> Cerrar sesión</q-btn>
+        <q-btn flat @click="logout">Cerrar sesión</q-btn>
       </q-toolbar>
     </q-header>
 
     <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered>
-      <!-- drawer content -->
         <div class="row justify-center contenedor-menu">
           <img src="../assets/speedy.png" id="target-img-1" style="height: 100px"/>
           <div
@@ -25,10 +22,8 @@
 
               <span style="font-weight: bold"></span>
             </q-avatar>
-            <!-- {{ usuarioAutenticado?.nombre }}
-            <span style="font-weight: bold"></span> -->
+            <span style="font-weight: bold"></span>
           </div>
-        <!-- </q-img> -->
       </div>
       <NavBar/>
     </q-drawer>
@@ -39,17 +34,26 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-
+import { ref, onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
 import NavBar from '../components/NavBar.vue'
+import { useRouter } from 'vue-router'
+import { useAutenticacionStore } from '../stores/autenticaciones'
 
 const leftDrawerOpen = ref(false)
-// const router = useRouter()
+const router = useRouter()
 
-// const logout = () => {
-//   router.push('/')
-//   cerrarSesion()
-// }
+const useUsuario = useAutenticacionStore()
+const { autenticarUsuario, cerrarSesion } = useUsuario
+const { usuarioAutenticado } = storeToRefs(useUsuario)
+
+const logout = () => {
+  router.push('/')
+  cerrarSesion()
+}
+onMounted(() => {
+  autenticarUsuario()
+})
 const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value
 }

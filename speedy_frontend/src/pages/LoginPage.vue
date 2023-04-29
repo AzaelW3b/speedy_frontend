@@ -18,7 +18,7 @@
               <q-input
                 filled
                 ref="usuarioRef"
-                v-model="usuarioObj.usuario"
+                v-model="usuarioObj.correo"
                 label="Ingresa el usuario"
                 :rules="[
                   (val) =>
@@ -34,7 +34,7 @@
             <div class="q-mb-md">
               <q-input
                 ref="contrasenaRef"
-                v-model="usuarioObj.contrasena"
+                v-model="usuarioObj.password"
                 filled
                 :type="isPassword ? 'password' : 'text'"
                 label="Ingresa la contraseña"
@@ -57,29 +57,33 @@
     </div>
   </template>
 <script>
-// import { useAutenticacionStore } from '../stores/autenticaciones'
+import { useAutenticacionStore } from '../stores/autenticaciones'
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 
 export default {
   setup () {
-    // const useAutenticacion = useAutenticacionStore()
-    // const { iniciarSesion } = useAutenticacion
+    const useAutenticacion = useAutenticacionStore()
+    const { iniciarSesion, iniciarSesionCliente } = useAutenticacion
 
     const isPassword = ref(true)
     const formulario = ref(null)
     const router = useRouter()
 
     const usuarioObj = reactive({
-      usuario: '',
-      contrasena: ''
+      correo: '',
+      password: ''
     })
 
     const login = async () => {
       if (await formulario.value.validate()) {
-        console.log(usuarioObj)
-        // await iniciarSesion(usuarioObj)
-        router.push('/principal')
+        if (usuarioObj.correo.includes('speedy')) {
+          await iniciarSesion(usuarioObj)
+          router.push('/principal')
+        } else {
+          await iniciarSesionCliente(usuarioObj)
+          router.push('/principal')
+        }
       }
     }
 
