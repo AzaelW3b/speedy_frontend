@@ -1,6 +1,6 @@
 <template>
     <div class="contenedor-login">
-      <div class="informacion-login contenedor">
+      <div class="informacion-login">
         <q-form
           class="bg-white formulario-login"
           @submit.prevent="login"
