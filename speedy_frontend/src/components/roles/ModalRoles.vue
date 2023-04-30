@@ -53,12 +53,15 @@ export default {
     const { rol } = storeToRefs(useRoles)
 
     const abrir = (esNuevoRegistro) => {
-      const rolNueva = {
-        _id: '',
-        rol: ''
+      let rolNuevo = null
+      if (esNuevoRegistro) {
+        rolNuevo = { rol: '' }
+      } else {
+        rolNuevo = { _id: '', rol: '' }
       }
+
       Object.keys(rol.value || rolObj).forEach(key => {
-        rolObj[key] = editarRegistros(rolNueva, rol.value, esNuevoRegistro)[key]
+        rolObj[key] = editarRegistros(rolNuevo, rol.value, esNuevoRegistro)[key]
       })
 
       modalRoles.value = true

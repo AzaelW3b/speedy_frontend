@@ -141,13 +141,24 @@ export default {
     })
 
     const abrir = (esNuevoRegistro) => {
-      const usuarioNuevo = {
-        _id: '',
-        nombreUsuario: '',
-        correo: '',
-        password: 'speedy123',
-        rol: ''
+      let usuarioNuevo = null
+      if (esNuevoRegistro) {
+        usuarioNuevo = {
+          nombreUsuario: '',
+          correo: '',
+          password: 'speedy123',
+          rol: ''
+        }
+      } else {
+        usuarioNuevo = {
+          _id: '',
+          nombreUsuario: '',
+          correo: '',
+          password: 'speedy123',
+          rol: ''
+        }
       }
+
       Object.keys(usuario.value || usuarioObj).forEach(key => {
         usuarioObj[key] = editarRegistros(usuarioNuevo, usuario.value, esNuevoRegistro)[key]
       })

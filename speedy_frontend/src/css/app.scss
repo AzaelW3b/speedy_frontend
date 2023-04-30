@@ -1,10 +1,58 @@
 // app global css in SCSS form
+html {
+    font-size: 62.5%;
+    box-sizing: border-box;
+}
+*, *::before, *::after {
+    box-sizing: inherit;
+}
+
+body {
+    font-size: 1.6rem;
+}
+
 @mixin adaptar( $tamanio ) {
     @media ( min-width:$tamanio ) {
         @content;   
     }
 }
+h1 {
+    font-size: 3.5rem;
+    @include adaptar( 768px ) {
+        font-size: 5.2rem;
 
+    }
+
+}
+
+h2 {
+    font-size: 2.5rem;
+    @include adaptar( 768px ) {
+        font-size: 3rem;
+
+    }
+}
+
+h3 {
+    font-size: 2rem;
+    @include adaptar( 768px ) {
+        font-size: 2.5rem;
+
+    }
+}
+p{
+    font-size: 1.8rem;
+    @include adaptar( 768px ){
+        font-size: 2rem;
+
+    }
+}
+
+.contenedor {
+    max-width: 120rem;
+    width: 95%;
+    margin: 0 auto;
+}
 
 /* login */
 // .informacion-login {
@@ -81,5 +129,31 @@
         span {
             font-weight: 300;
         }
+    }
+}
+
+.cards-dashboard {
+    display: grid;
+    gap: 1.5rem;
+    @include adaptar(768px) {
+       grid-template-columns: repeat( 3,1fr );
+    
+    }
+
+    .contenido-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      h3 {
+        text-align: center;
+      }
+      span {
+        font-size: 4rem;
+      }
+      p {
+        font-size: 2.5rem;
+      }
     }
 }
