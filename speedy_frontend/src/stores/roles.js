@@ -1,23 +1,50 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { api } from 'src/boot/axios'
 
 export const useRolesStore = defineStore('roles', () => {
   const roles = ref([])
   const rol = ref(null)
 
   // guardar roles
-  const guardarRoles = (rol) => {
-    roles.value = [...roles.value, rol]
+  const guardarRoles = async (rol) => {
+    try {
+      const { data } = await api.post('/roles', rol)
+      roles.value = [...roles.value, data]
+    } catch (error) {
+      console.log(error.response.data.msg)
+    }
   }
   // obtener roles
+  const obtenerRoles = async () => {
+    try {
+      const { data } = await api.get('/roles')
+      console.log(data)
+      roles.value = data
+    } catch (error) {
+      console.log(error.response.data.msg)
+    }
+  }
   // editar roles
-  const editarRoles = (rol) => {
-    const rolOriginal = roles.value.find(rolIndex => rolIndex._id === rol._id)
-    Object.assign(rolOriginal, rol)
+  const editarRoles = async (rol) => {
+    try {
+      const { data } = await api.put(`/roles/${rol._id}`, rol)
+      console.log(data)
+      const rolOriginal = roles.value.find(rolIndex => rolIndex._id === rol._id)
+      Object.assign(rolOriginal, rol)
+    } catch (error) {
+      console.log(error.response.data.msg)
+    }
   }
   // eliminar roles
-  const eliminarRoles = (id) => {
-    roles.value = roles.value.filter(rol => rol._id !== id)
+  const eliminarRoles = async (id) => {
+    try {
+      const { data } = await api.delete(`/roles/${id}`)
+      console.log(data)
+      roles.value = roles.value.filter(rol => rol._id !== id)
+    } catch (error) {
+      console.log(error.response.data.msg)
+    }
   }
 
   const obtenerRolesId = (id) => {
@@ -33,7 +60,8 @@ export const useRolesStore = defineStore('roles', () => {
     guardarRoles,
     editarRoles,
     eliminarRoles,
-    obtenerRolesId
+    obtenerRolesId,
+    obtenerRoles
 
   }
 })

@@ -39,6 +39,7 @@ import { storeToRefs } from 'pinia'
 import NavBar from '../components/NavBar.vue'
 import { useRouter } from 'vue-router'
 import { useAutenticacionStore } from '../stores/autenticaciones'
+import { useRolesStore } from '../stores/roles'
 
 const leftDrawerOpen = ref(false)
 const router = useRouter()
@@ -47,12 +48,16 @@ const useUsuario = useAutenticacionStore()
 const { autenticarUsuario, cerrarSesion } = useUsuario
 const { usuarioAutenticado } = storeToRefs(useUsuario)
 
+const useRol = useRolesStore()
+const { obtenerRoles } = useRol
+
 const logout = () => {
   router.push('/')
   cerrarSesion()
 }
 onMounted(() => {
   autenticarUsuario()
+  obtenerRoles()
 })
 const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value

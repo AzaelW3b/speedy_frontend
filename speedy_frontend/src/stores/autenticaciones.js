@@ -31,10 +31,9 @@ export const useAutenticacionStore = defineStore('autenticaciones', () => {
       const { data } = await api.post('/clientes/login', usuario)
       isLogin.value = true
       isAdmin.value = data.isAdmin
-      console.log('xd', isAdmin.value)
+
       localStorage.setItem('token', data.token)
       localStorage.setItem('isAdmin', data.isAdmin)
-      console.log('token: ', data)
     } catch (error) {
       console.log(error.response.data.msg)
     }
@@ -72,9 +71,6 @@ export const useAutenticacionStore = defineStore('autenticaciones', () => {
     try {
       isLogin.value = true
       isAdmin.value = parseInt(localStorage.getItem('isAdmin'))
-
-      console.log(typeof isAdmin.value)
-      console.log(isAdmin.value)
 
       if (isAdmin.value === 1) {
         const { data } = await api.get('/usuarios/perfil', configuracion)

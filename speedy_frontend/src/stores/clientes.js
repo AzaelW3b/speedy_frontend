@@ -7,7 +7,6 @@ export const useClientesStore = defineStore('clientes', () => {
 
   // guardar
   const guardarClientes = (cliente) => {
-    console.log('a', cliente)
     clientes.value = [...clientes.value, cliente]
   }
   // obtener

@@ -99,6 +99,7 @@ const confirmarEliminarRol = (rol) => {
     console.log('cancelando.....')
   })
 }
+
 </script>
 
 <style>

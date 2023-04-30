@@ -3,9 +3,11 @@
      <q-card class="full-width">
        <q-card-section class="bg-primary text-white">
           <q-btn icon="close" flat round dense v-close-popup />
-         <div class="text-h4 text-center ">
+         <div class="text-h4 text-center" v-if="nuevoRegistro">
            Usuarios
-           <q-separator/>
+         </div>
+         <div class="text-h4 text-center" v-else>
+           Editar usuario
          </div>
        </q-card-section>
 
@@ -30,7 +32,7 @@
       </div>
 
       <div class="row q-my-sm" >
-        <q-card-section class="col-6 q-pt-none">
+        <q-card-section class="col-6 q-pt-none" v-if="nuevoRegistro">
           <label>Password</label>
           <q-input
                 ref="contrasenaRef"
@@ -48,18 +50,41 @@
                 </template>
               </q-input>
         </q-card-section>
+        <div v-else></div>
+        <!-- <q-card-section class="col-6 q-pt-none" v-else>
+          <q-btn
+              @click="cambiarPassword = !cambiarPassword"
+              v-if="!cambiarPassword"
+              color="primary"
+              label="cambiar password"
+            />
+          <label v-if="cambiarPassword">Ingresa tu nuevo password</label>
+          <q-input
+                v-if="cambiarPassword"
+                ref="contrasenaRef"
+                v-model="nuevoPassword"
+                outlined
+                :type="isPassword ? 'password' : 'text'"
+                label="Ingresa la contraseña"
+              >
+                <template v-slot:append>
+                  <q-icon
+                    :name="isPassword ? 'visibility_off' : 'visibility'"
+                    class="cursor-pointer"
+                    @click="isPassword = !isPassword"
+                  />
+                </template>
+            </q-input>
+
+        </q-card-section> -->
 
         <q-card-section class="col-6 q-pt-none">
           <label>Rol</label>
             <q-select
                   outlined
                   v-model="usuarioObj.rol"
-                  use-input
-                  input-debounce="0"
-                  label="Selecciona el cliente que invito"
+                  label="Selecciona el rol"
                   :options="rolesNuevos"
-                  @filter="parametrosFiltradosRoles"
-                  behavior="menu"
                 >
                   <template v-slot:no-option>
                     <q-item>
@@ -89,17 +114,13 @@ import { ref, reactive, computed } from 'vue'
 import { useUsuariosStore } from 'src/stores/usuarios'
 import { useRolesStore } from 'src/stores/roles'
 import { editarRegistros } from 'src/helpers/editarRegistros'
-import { v4 as uuidv4 } from 'uuid'
 import { storeToRefs } from 'pinia'
-import { filtradoBusquedaObj } from 'src/helpers/filtradoBusquedaObj'
 
 export default {
   setup () {
     const modalUsuarios = ref(false)
     const isPassword = ref(false)
-
     const usuarioObj = reactive({
-      _id: '',
       nombreUsuario: '',
       correo: '',
       password: 'speedy123',
@@ -115,17 +136,9 @@ export default {
     const useRol = useRolesStore()
     const { roles } = storeToRefs(useRol)
 
-    const rolesOpciones = computed(() => {
-      return roles.value.map(rol => {
-        return {
-          id: rol._id,
-          label: rol.rol,
-          value: rol._id
-        }
-      })
+    const rolesNuevos = computed(() => {
+      return roles.value.map(rol => rol.rol)
     })
-
-    const rolesNuevos = ref(rolesOpciones.value)
 
     const abrir = (esNuevoRegistro) => {
       const usuarioNuevo = {
@@ -142,12 +155,8 @@ export default {
       modalUsuarios.value = true
       nuevoRegistro.value = esNuevoRegistro
     }
-    const parametrosFiltradosRoles = (val, update) => {
-      filtradoBusquedaObj(val, update, rolesOpciones.value, rolesNuevos)
-    }
     const guardarUsuario = () => {
       if (nuevoRegistro.value) {
-        usuarioObj._id = uuidv4()
         const usuarioNuevo = { ...usuarioObj }
         guardarUsuarios(usuarioNuevo)
       } else {
@@ -161,10 +170,10 @@ export default {
       modalUsuarios,
       usuarioObj,
       rolesNuevos,
+      nuevoRegistro,
       // metodos
       abrir,
-      guardarUsuario,
-      parametrosFiltradosRoles
+      guardarUsuario
 
     }
   }

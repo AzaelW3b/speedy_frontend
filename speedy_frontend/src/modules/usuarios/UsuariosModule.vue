@@ -46,7 +46,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useQuasar } from 'quasar'
 import { storeToRefs } from 'pinia'
 import { useUsuariosStore } from 'src/stores/usuarios'
@@ -54,7 +54,7 @@ import ModalUsuarios from 'src/components/usuarios/ModalUsuarios.vue'
 
 // const useAspirante = useAspirantesStore()
 const useUsuario = useUsuariosStore()
-const { obtenerUsuariosId, eliminarUsuarios } = useUsuario
+const { obtenerUsuariosId, eliminarUsuarios, obtenerUsuarios } = useUsuario
 const { usuarios } = storeToRefs(useUsuario)
 
 const columns = [
@@ -75,7 +75,7 @@ const columns = [
   {
     name: 'rol',
     label: 'Rol del usuario',
-    field: row => row?.rol?.label,
+    field: 'rol',
     align: 'left',
     sortable: true
   },
@@ -113,6 +113,7 @@ const confirmarEliminarUsuario = (usuario) => {
     console.log('cancelando.....')
   })
 }
+onMounted(() => obtenerUsuarios())
 </script>
 
 <style>

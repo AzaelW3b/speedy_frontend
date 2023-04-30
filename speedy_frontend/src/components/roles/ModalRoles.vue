@@ -36,7 +36,6 @@
 import { ref, reactive } from 'vue'
 import { useRolesStore } from 'src/stores/roles'
 import { editarRegistros } from 'src/helpers/editarRegistros'
-import { v4 as uuidv4 } from 'uuid'
 import { storeToRefs } from 'pinia'
 
 export default {
@@ -44,7 +43,6 @@ export default {
     const modalRoles = ref(false)
 
     const rolObj = reactive({
-      _id: '',
       rol: ''
 
     })
@@ -68,7 +66,6 @@ export default {
     }
     const guardarRol = () => {
       if (nuevoRegistro.value) {
-        rolObj._id = uuidv4()
         const rolNuevo = { ...rolObj }
         guardarRoles(rolNuevo)
       } else {
