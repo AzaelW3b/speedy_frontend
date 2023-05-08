@@ -134,7 +134,7 @@ export default {
       clienteId: null,
       productos: null,
       total: 0,
-      fecha: Date.now(),
+      fecha: '',
       cashback: 0.0
 
     })

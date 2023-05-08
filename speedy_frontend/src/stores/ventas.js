@@ -6,6 +6,7 @@ import { useClientesStore } from './clientes'
 export const useVentasStore = defineStore('ventas', () => {
   const ventas = ref([])
   const venta = ref(null)
+  const ventaDia = ref(null)
 
   // guardar productos
   const guardarVentas = async (venta) => {
@@ -60,6 +61,15 @@ export const useVentasStore = defineStore('ventas', () => {
     const cliente = clientes.value.find(cliente => cliente._id === id)
     return cliente?.nombreCliente
   }
+
+  const obtenerVentaDia = async () => {
+    try {
+      const { data } = await api.get('/ventas/ventasDia')
+      ventaDia.value = data
+    } catch (error) {
+      console.log(error)
+    }
+  }
   return {
     // states
     ventas,
@@ -70,6 +80,8 @@ export const useVentasStore = defineStore('ventas', () => {
     eliminarVentas,
     obtenerVentasId,
     obtenerVentas,
-    obtenerClienteVenta
+    obtenerClienteVenta,
+    obtenerVentaDia,
+    ventaDia
   }
 })
