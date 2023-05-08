@@ -36,7 +36,6 @@
 import { ref, reactive } from 'vue'
 import { useCategoriasStore } from 'src/stores/categorias'
 import { editarRegistros } from 'src/helpers/editarRegistros'
-import { v4 as uuidv4 } from 'uuid'
 import { storeToRefs } from 'pinia'
 
 export default {
@@ -44,7 +43,6 @@ export default {
     const modalCategorias = ref(false)
 
     const categoriaObj = reactive({
-      _id: '',
       nombreCategoria: ''
 
     })
@@ -56,9 +54,13 @@ export default {
 
     const abrir = (esNuevoRegistro) => {
       const categoriaNueva = {
-        _id: '',
         nombreCategoria: ''
       }
+
+      if (!esNuevoRegistro) {
+        categoriaNueva._id = null
+      }
+
       Object.keys(categoria.value || categoriaObj).forEach(key => {
         categoriaObj[key] = editarRegistros(categoriaNueva, categoria.value, esNuevoRegistro)[key]
       })
@@ -68,10 +70,10 @@ export default {
     }
     const guardarCategoria = () => {
       if (nuevoRegistro.value) {
-        categoriaObj._id = uuidv4()
         const categoriaNueva = { ...categoriaObj }
         guardarCategorias(categoriaNueva)
       } else {
+        console.log('categoria editar', categoriaObj)
         editarCategorias(categoriaObj)
       }
     }

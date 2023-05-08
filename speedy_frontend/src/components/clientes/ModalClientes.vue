@@ -58,8 +58,29 @@
                 label="No"
               />
            </div>
-
           </q-card-section>
+
+          <div class="row q-my-sm">
+              <q-card-section class="col-12 q-pt-none" v-if="nuevoRegistro">
+                <label>Password</label>
+                  <q-input
+                        ref="contrasenaRef"
+                        v-model="clienteObj.password"
+                        outlined
+                        :type="isPassword ? 'password' : 'text'"
+                        label="Ingresa la contraseña"
+                      >
+                        <template v-slot:append>
+                          <q-icon
+                            :name="isPassword ? 'visibility_off' : 'visibility'"
+                            class="cursor-pointer"
+                            @click="isPassword = !isPassword"
+                          />
+                        </template>
+                      </q-input>
+              </q-card-section>
+              <div v-else></div>
+          </div>
 
           <q-card-section class="col-12 q-pt-none" v-if="clienteObj.fueInvitado">
             <label>Selecciona el cliente que invito</label>
@@ -100,24 +121,24 @@
 import { ref, reactive, computed } from 'vue'
 import { useClientesStore } from 'src/stores/clientes'
 import { editarRegistros } from 'src/helpers/editarRegistros'
-import { v4 as uuidv4 } from 'uuid'
 import { storeToRefs } from 'pinia'
 import { filtradoBusquedaObj } from 'src/helpers/filtradoBusquedaObj'
 
 export default {
   setup () {
     const modalClientes = ref(false)
+    const isPassword = ref(false)
 
     const clienteObj = reactive({
-      _id: '',
       nombreCliente: '',
       telefono: '',
       correo: '',
+      password: 'speedy123',
       fueInvitado: false,
-      invitadoPorId: '',
-      clienteInvitadoUno: '',
-      clienteInvitadoDos: '',
-      clienteInvitadoTres: '',
+      invitadoPorId: null,
+      clienteInvitadoUno: null,
+      clienteInvitadoDos: null,
+      clienteInvitadoTres: null,
       invitados: 0
 
     })
@@ -140,16 +161,19 @@ export default {
 
     const abrir = (esNuevoRegistro) => {
       const clienteNuevo = {
-        _id: '',
         nombreCliente: '',
         telefono: '',
         correo: '',
+        password: 'speedy123',
         fueInvitado: false,
-        invitadoPorId: '',
-        clienteInvitadoUno: '',
-        clienteInvitadoDos: '',
-        clienteInvitadoTres: '',
+        invitadoPorId: null,
+        clienteInvitadoUno: null,
+        clienteInvitadoDos: null,
+        clienteInvitadoTres: null,
         invitados: 0
+      }
+      if (!esNuevoRegistro) {
+        clienteNuevo._id = null
       }
       Object.keys(cliente.value || clienteObj).forEach(key => {
         clienteObj[key] = editarRegistros(clienteNuevo, cliente.value, esNuevoRegistro)[key]
@@ -160,8 +184,8 @@ export default {
     }
     const guardarCliente = () => {
       if (nuevoRegistro.value) {
-        clienteObj._id = uuidv4()
         const clienteNuevo = { ...clienteObj }
+        // console.log(clienteNuevo)
         guardarClientes(clienteNuevo)
       } else {
         editarClientes(clienteObj)
@@ -176,6 +200,8 @@ export default {
       modalClientes,
       clienteObj,
       clientesNuevos,
+      nuevoRegistro,
+      isPassword,
       // metodos
       abrir,
       guardarCliente,

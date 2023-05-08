@@ -40,6 +40,9 @@ import NavBar from '../components/NavBar.vue'
 import { useRouter } from 'vue-router'
 import { useAutenticacionStore } from '../stores/autenticaciones'
 import { useRolesStore } from '../stores/roles'
+import { useClientesStore } from 'src/stores/clientes'
+import { useCategoriasStore } from 'src/stores/categorias'
+import { useProductosStore } from 'src/stores/productos'
 
 const leftDrawerOpen = ref(false)
 const router = useRouter()
@@ -48,8 +51,17 @@ const useUsuario = useAutenticacionStore()
 const { autenticarUsuario, cerrarSesion } = useUsuario
 const { usuarioAutenticado } = storeToRefs(useUsuario)
 
+const useCliente = useClientesStore()
+const { obtenerClientes } = useCliente
+
 const useRol = useRolesStore()
 const { obtenerRoles } = useRol
+
+const useCategoria = useCategoriasStore()
+const { obtenerCategorias } = useCategoria
+
+const useProducto = useProductosStore()
+const { obtenerProductos } = useProducto
 
 const logout = () => {
   router.push('/')
@@ -58,6 +70,9 @@ const logout = () => {
 onMounted(() => {
   autenticarUsuario()
   obtenerRoles()
+  obtenerClientes()
+  obtenerCategorias()
+  obtenerProductos()
 })
 const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value

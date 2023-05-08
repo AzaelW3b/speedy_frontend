@@ -141,22 +141,29 @@ export default {
     })
 
     const abrir = (esNuevoRegistro) => {
-      let usuarioNuevo = null
-      if (esNuevoRegistro) {
-        usuarioNuevo = {
-          nombreUsuario: '',
-          correo: '',
-          password: 'speedy123',
-          rol: ''
-        }
-      } else {
-        usuarioNuevo = {
-          _id: '',
-          nombreUsuario: '',
-          correo: '',
-          password: 'speedy123',
-          rol: ''
-        }
+      // let usuarioNuevo = null
+      // if (esNuevoRegistro) {
+      //   usuarioNuevo = {
+      //     nombreUsuario: '',
+      //     correo: '',
+      //     password: 'speedy123',
+      //     rol: ''
+      //   }
+      // } else {
+      //   usuarioNuevo = {
+      //     _id: '',
+      //     nombreUsuario: '',
+      //     correo: '',
+      //     password: 'speedy123',
+      //     rol: ''
+      //   }
+      // }
+      const usuarioNuevo = {
+        _id: null,
+        nombreUsuario: '',
+        correo: '',
+        password: 'speedy123',
+        rol: ''
       }
 
       Object.keys(usuario.value || usuarioObj).forEach(key => {

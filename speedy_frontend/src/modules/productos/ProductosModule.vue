@@ -74,7 +74,7 @@ const columns = [
   {
     name: 'categoria',
     label: 'Categoria',
-    field: row => row?.categoria?.value,
+    field: 'categoria',
     align: 'left',
     sortable: true
   },

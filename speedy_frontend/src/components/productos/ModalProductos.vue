@@ -80,7 +80,6 @@ import { ref, reactive, computed } from 'vue'
 import { useProductosStore } from 'src/stores/productos'
 import { useCategoriasStore } from 'src/stores/categorias'
 import { editarRegistros } from 'src/helpers/editarRegistros'
-import { v4 as uuidv4 } from 'uuid'
 import { storeToRefs } from 'pinia'
 import { filtradoBusquedaObj } from 'src/helpers/filtradoBusquedaObj'
 
@@ -118,11 +117,13 @@ export default {
 
     const abrir = (esNuevoRegistro) => {
       const productoNuevo = {
-        _id: '',
         codigoBarras: '',
         nombreProducto: '',
         precio: 0,
         categoria: ''
+      }
+      if (!esNuevoRegistro) {
+        productoNuevo._id = null
       }
       Object.keys(producto.value || productoObj).forEach(key => {
         productoObj[key] = editarRegistros(productoNuevo, producto.value, esNuevoRegistro)[key]
@@ -136,8 +137,8 @@ export default {
     }
     const guardarProducto = () => {
       if (nuevoRegistro.value) {
-        productoObj._id = uuidv4()
         const productoNuevo = { ...productoObj }
+        productoNuevo.categoria = productoNuevo.categoria.value
         guardarProductos(productoNuevo)
       } else {
         editarProductos(productoObj)
