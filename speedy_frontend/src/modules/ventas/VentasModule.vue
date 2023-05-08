@@ -50,17 +50,20 @@ import { ref } from 'vue'
 import { useQuasar } from 'quasar'
 import { storeToRefs } from 'pinia'
 import { useVentasStore } from 'src/stores/ventas'
+import { formatearFecha } from '../../helpers/formatearFecha'
 import ModalVentas from 'src/components/ventas/ModalVentas.vue'
 
 const useVenta = useVentasStore()
-const { obtenerVentasId, eliminarVentas } = useVenta
+const { obtenerVentasId, eliminarVentas, obtenerClienteVenta } = useVenta
 const { ventas } = storeToRefs(useVenta)
+
+const formatoMoneda = ref(new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }))
 
 const columns = [
   {
     name: 'cliente',
     label: 'Cliente',
-    field: row => row?.cliente?.label,
+    field: row => obtenerClienteVenta(row?.clienteId),
     align: 'left',
     sortable: true
   },
@@ -74,21 +77,21 @@ const columns = [
   {
     name: 'total',
     label: 'Total del compra',
-    field: 'total',
+    field: row => formatoMoneda.value.format(row.total),
     align: 'left',
     sortable: true
   },
   {
     name: 'cashback',
     label: 'Dinero recuperado del cliente',
-    field: 'cashback',
+    field: row => formatoMoneda.value.format(row.cashback),
     align: 'left',
     sortable: true
   },
   {
     name: 'fecha',
     label: 'Fecha de compra',
-    field: 'fecha',
+    field: row => formatearFecha(row.fecha),
     align: 'left',
     sortable: true
   },

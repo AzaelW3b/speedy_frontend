@@ -14,7 +14,7 @@
             <label>Cliente</label>
             <q-select
                     outlined
-                    v-model="ventaObj.cliente"
+                    v-model="ventaObj.clienteId"
                     use-input
                     input-debounce="0"
                     label="Selecciona el cliente"
@@ -123,7 +123,6 @@ import { useClientesStore } from 'src/stores/clientes'
 import { useProductosStore } from 'src/stores/productos'
 import { useVentasStore } from 'src/stores/ventas'
 import { editarRegistros } from 'src/helpers/editarRegistros'
-import { v4 as uuidv4 } from 'uuid'
 import { storeToRefs } from 'pinia'
 import { filtradoBusquedaObj } from 'src/helpers/filtradoBusquedaObj'
 // import daysjs from 'dayjs'
@@ -132,7 +131,7 @@ export default {
   setup () {
     const modalVentas = ref(false)
     const ventaObj = reactive({
-      cliente: null,
+      clienteId: null,
       productos: null,
       total: 0,
       fecha: Date.now(),
@@ -217,7 +216,7 @@ export default {
     const abrir = (esNuevoRegistro) => {
       const ventaNueva = {
         _id: '',
-        cliente: null,
+        clienteId: null,
         productos: [],
         total: 0,
         fecha: '',
@@ -236,9 +235,8 @@ export default {
     const guardarVenta = () => {
       ventaObj.cashback = ventaObj.total * 0.05
       if (nuevoRegistro.value) {
-        ventaObj._id = uuidv4()
         const ventaNueva = { ...ventaObj }
-
+        ventaNueva.clienteId = ventaNueva?.clienteId?.value
         guardarVentas(ventaNueva)
       } else {
         editarVentas(ventaObj)

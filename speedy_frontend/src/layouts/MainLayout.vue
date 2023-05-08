@@ -43,6 +43,7 @@ import { useRolesStore } from '../stores/roles'
 import { useClientesStore } from 'src/stores/clientes'
 import { useCategoriasStore } from 'src/stores/categorias'
 import { useProductosStore } from 'src/stores/productos'
+import { useVentasStore } from 'src/stores/ventas'
 
 const leftDrawerOpen = ref(false)
 const router = useRouter()
@@ -63,6 +64,9 @@ const { obtenerCategorias } = useCategoria
 const useProducto = useProductosStore()
 const { obtenerProductos } = useProducto
 
+const useVenta = useVentasStore()
+const { obtenerVentas } = useVenta
+
 const logout = () => {
   router.push('/')
   cerrarSesion()
@@ -73,6 +77,7 @@ onMounted(() => {
   obtenerClientes()
   obtenerCategorias()
   obtenerProductos()
+  obtenerVentas()
 })
 const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value
