@@ -56,9 +56,11 @@ export const useVentasStore = defineStore('ventas', () => {
 
   // obtener cliente por Id
   const obtenerClienteVenta = (id) => {
+    console.log('idddddd', id)
     const useCliente = useClientesStore()
     const { clientes } = storeToRefs(useCliente)
     const cliente = clientes.value.find(cliente => cliente._id === id)
+    console.log(cliente)
     return cliente?.nombreCliente
   }
 

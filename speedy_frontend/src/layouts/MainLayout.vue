@@ -5,7 +5,7 @@
         <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
 
         <q-toolbar-title>
-          {{ usuarioAutenticado?.usuario?.nombreUsuario || usuarioAutenticado?.nombreCliente }}
+          {{ usuarioAutenticado?.usuario?.nombreUsuario || usuarioAutenticado?.usuario?.nombreCliente }}
         </q-toolbar-title>
         <q-btn flat @click="logout">Cerrar sesión</q-btn>
       </q-toolbar>

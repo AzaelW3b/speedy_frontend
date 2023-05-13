@@ -92,6 +92,13 @@ const columns = [
     sortable: true
   },
   {
+    name: 'rol',
+    label: 'Rol',
+    field: 'rol',
+    align: 'left',
+    sortable: true
+  },
+  {
     name: 'acciones',
     label: 'Acciones',
     field: 'acciones',

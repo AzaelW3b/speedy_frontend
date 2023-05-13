@@ -139,7 +139,8 @@ export default {
       clienteInvitadoUno: null,
       clienteInvitadoDos: null,
       clienteInvitadoTres: null,
-      invitados: 0
+      invitadosCantidad: 0,
+      rol: 'socio'
 
     })
     const nuevoRegistro = ref(true)
@@ -170,7 +171,9 @@ export default {
         clienteInvitadoUno: null,
         clienteInvitadoDos: null,
         clienteInvitadoTres: null,
-        invitados: 0
+        invitadosCantidad: 0,
+        rol: 'socio'
+
       }
       if (!esNuevoRegistro) {
         clienteNuevo._id = null
