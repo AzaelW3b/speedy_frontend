@@ -99,6 +99,13 @@ const columns = [
     sortable: true
   },
   {
+    name: 'tipoMembresia',
+    label: 'Tipo de membresia',
+    field: 'tipoMembresia',
+    align: 'left',
+    sortable: true
+  },
+  {
     name: 'acciones',
     label: 'Acciones',
     field: 'acciones',

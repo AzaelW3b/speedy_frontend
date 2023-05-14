@@ -40,6 +40,29 @@
 
               />
           </q-card-section>
+
+          <q-card-section class="col-6 q-pt-none">
+            <label>Selecciona el tipo de membresia</label>
+              <q-select
+                  outlined
+                  v-model="clienteObj.tipoMembresia"
+                  use-input
+                  input-debounce="0"
+                  label="Selecciona la membresia"
+                  :options="membresias"
+                  behavior="menu"
+                >
+                  <template v-slot:no-option>
+                    <q-item>
+                      <q-item-section class="text-grey">
+                        No se encontraron resultados
+                      </q-item-section>
+                    </q-item>
+                  </template>
+                </q-select>
+
+          </q-card-section>
+
           <q-card-section class="col-6 q-pt-none">
             <label>¿Fue invitado por alguien?</label>
            <div>
@@ -128,6 +151,7 @@ export default {
   setup () {
     const modalClientes = ref(false)
     const isPassword = ref(false)
+    const membresias = ref(['A', 'B', 'C', 'Sin membresia'])
 
     const clienteObj = reactive({
       nombreCliente: '',
@@ -136,6 +160,7 @@ export default {
       password: 'speedy123',
       fueInvitado: false,
       invitadoPorId: null,
+      tipoMembresia: '',
       clienteInvitadoUno: null,
       clienteInvitadoDos: null,
       clienteInvitadoTres: null,
@@ -167,6 +192,7 @@ export default {
         correo: '',
         password: 'speedy123',
         fueInvitado: false,
+        tipoMembresia: '',
         invitadoPorId: null,
         clienteInvitadoUno: null,
         clienteInvitadoDos: null,
@@ -205,6 +231,7 @@ export default {
       clientesNuevos,
       nuevoRegistro,
       isPassword,
+      membresias,
       // metodos
       abrir,
       guardarCliente,
