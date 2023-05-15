@@ -33,7 +33,7 @@
         <q-card-section class="contenido-card">
           <span class="material-icons text-primary">shopping_bag</span>
           <h3>Compras hechas en el mes</h3>
-          <p class="text-primary">{{ ventasCliente ? ventasCliente[0]?.totalCount : '' }}</p>
+          <p class="text-primary">{{ ventasCliente ? ventasCliente[0]?.totalCount : 0 }}</p>
         </q-card-section>
       </q-card>
 
@@ -41,7 +41,7 @@
         <q-card-section class="contenido-card">
           <span class="material-icons text-primary">payments</span>
           <h3>Total gastado en el mes</h3>
-          <p class="text-primary">{{ ventasCliente ? formatoMoneda.format(ventasCliente[0]?.totalVentas) : '' }}</p>
+          <p class="text-primary">{{ ventasCliente ? formatoMoneda.format(ventasCliente[0]?.totalVentas) : 0 }}</p>
         </q-card-section>
       </q-card>
 

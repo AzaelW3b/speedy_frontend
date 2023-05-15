@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>COMPRAS XD</h1>
+        <h1>En desarollo ...</h1>
     </div>
 </template>
 
