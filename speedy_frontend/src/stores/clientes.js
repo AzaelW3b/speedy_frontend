@@ -9,10 +9,42 @@ export const useClientesStore = defineStore('clientes', () => {
   // guardar
   const guardarClientes = async (cliente) => {
     try {
-      const { data } = await api.post('/clientes', cliente)
-      clientes.value = [...clientes.value, data]
+      if (cliente.fueInvitado) {
+        cliente.invitadoPor = cliente.invitadoPorId.id
+        // debemos buscar al cliente que lo invito
+        const clienteInvito = clientes.value.find(clienteInvitado => clienteInvitado._id === cliente.invitadoPor)
+        clienteInvito.invitadosCantidad++
+
+        if (clienteInvito.invitadosCantidad > 3) {
+          console.log('El cliente, ya llego al maximo de invitados', clienteInvito.nombreCliente)
+          clienteInvito.invitadosCantidad = 3
+          return
+        }
+        const { data } = await api.post('/clientes', cliente)
+
+        // logica de clientes
+        if (clienteInvito.invitadosCantidad === 1) {
+          // primer cliente que invita
+          clienteInvito.clienteInvitadoUno = data._id
+        }
+        if (clienteInvito.invitadosCantidad === 2) {
+          clienteInvito.clienteInvitadoDos = data._id
+        }
+        if (clienteInvito.invitadosCantidad === 3) {
+          clienteInvito.clienteInvitadoTres = data._id
+        }
+        console.log(clienteInvito)
+        // lo añadimos al state
+        clientes.value = [...clientes.value, data]
+        // actualizamos el registro
+        await api.put(`/clientes/${clienteInvito._id}`, clienteInvito)
+      } else {
+        const { data } = await api.post('/clientes', cliente)
+        // console.log(cliente)
+        clientes.value = [...clientes.value, data]
+      }
     } catch (error) {
-      console.log(error.response.data.msg)
+      console.log(error)
     }
   }
   // obtener
@@ -49,6 +81,7 @@ export const useClientesStore = defineStore('clientes', () => {
   // obtener por Id
   const obtenerClienteId = (id) => {
     cliente.value = clientes.value.find(cliente => cliente._id === id)
+    return cliente.value
   }
   return {
     // states

@@ -1,121 +1,78 @@
 <template>
-    <q-dialog v-model="modalVentas">
-       <q-card class="full-width">
-         <q-card-section class="bg-primary text-white">
-            <q-btn icon="close" flat round dense v-close-popup />
-           <div class="text-h4 text-center ">
-             Registrar nueva venta
-             <q-separator/>
-           </div>
-         </q-card-section>
-
-         <div class="row q-my-sm">
-          <q-card-section class="col-6 q-pt-none">
-            <label>Cliente</label>
-            <q-select
-                    outlined
-                    v-model="ventaObj.clienteId"
-                    use-input
-                    input-debounce="0"
-                    label="Selecciona el cliente"
-                    :options="clientesNuevos"
-                    @filter="parametrosFiltradosClientes"
-                    behavior="menu"
-                  >
-                    <template v-slot:no-option>
-                      <q-item>
-                        <q-item-section class="text-grey">
-                          No se encontraron resultados
-                        </q-item-section>
-                      </q-item>
-                    </template>
-                </q-select>
-          </q-card-section>
-
-          <q-card-section class="col-6 q-pt-none">
-            <label>Productos</label>
-                <q-select
-                  outlined
-                  v-model="ventaObj.productos"
-                  use-input
-                  use-chips
-                  multiple
-                  label="Selecciona un producto"
-                  input-debounce="0"
-                  @new-value="createValue"
-                  :options="productosNuevos"
-                  @filter="filterFn"
-                  style="width: 250px"
-                  >
-                    <template v-slot:no-option>
-                      <q-item>
-                        <q-item-section class="text-grey">
-                          No se encontraron resultados
-                        </q-item-section>
-                      </q-item>
-                    </template>
-                </q-select>
-          </q-card-section>
+  <q-dialog v-model="modalVentas">
+    <q-card class="full-width">
+      <q-card-section class="bg-primary text-white">
+        <q-btn icon="close" flat round dense v-close-popup />
+        <div class="text-h4 text-center ">
+          Registrar nueva venta
+          <q-separator />
         </div>
-        <div class="row q-my-sm">
-          <q-card-section class="col-12 q-pt-none">
-            <label>Fecha de compra</label>
-            <q-input
-              outlined
-              type="date"
-              v-model="ventaObj.fecha"
-              label="Fecha de compra"
-            />
+      </q-card-section>
 
-          </q-card-section>
-        </div>
+      <div class="row q-my-sm">
+        <q-card-section class="col-6 q-pt-none">
+          <label>Cliente</label>
+          <q-select outlined v-model="ventaObj.clienteId" use-input input-debounce="0" label="Selecciona el cliente"
+            :options="clientesNuevos" @filter="parametrosFiltradosClientes" behavior="menu">
+            <template v-slot:no-option>
+              <q-item>
+                <q-item-section class="text-grey">
+                  No se encontraron resultados
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+        </q-card-section>
 
-         <div class="q-pa-md">
-          <q-table
-            v-if="ventaObj?.productos.length > 0"
-            :rows="ventaObj?.productos"
-            :columns="columns"
-            row-key="name"
-          >
+        <q-card-section class="col-6 q-pt-none">
+          <label>Productos</label>
+          <q-select outlined v-model="ventaObj.productos" use-input use-chips multiple label="Selecciona un producto"
+            input-debounce="0" @new-value="createValue" :options="productosNuevos" @filter="filterFn"
+            style="width: 250px">
+            <template v-slot:no-option>
+              <q-item>
+                <q-item-section class="text-grey">
+                  No se encontraron resultados
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+        </q-card-section>
+      </div>
+      <div class="row q-my-sm">
+        <q-card-section class="col-12 q-pt-none">
+          <label>Fecha de compra</label>
+          <q-input outlined type="date" v-model="ventaObj.fecha" label="Fecha de compra" />
+
+        </q-card-section>
+      </div>
+
+      <div class="q-pa-md">
+        <q-table v-if="ventaObj?.productos.length > 0" :rows="ventaObj?.productos" :columns="columns" row-key="name">
           <template v-slot:body-cell-acciones="props">
-          <q-td>
-            <q-btn
-              @click="aumentarCantidadProducto(props.row)"
-              flat
-              color="dark"
-              icon="add"
-            >
-              <q-tooltip>Aumentar cantidad de producto </q-tooltip>
-            </q-btn>
-            <q-btn
-              @click="disminuirCantidadProducto(props.row)"
-              flat
-              color="negative"
-              icon="horizontal_rule"
-            >
-              <q-tooltip>Disminuir la cantidad de productos</q-tooltip>
-            </q-btn>
-          </q-td>
-        </template>
-          </q-table>
-        </div>
+            <q-td>
+              <q-btn @click="aumentarCantidadProducto(props.row)" flat color="dark" icon="add">
+                <q-tooltip>Aumentar cantidad de producto </q-tooltip>
+              </q-btn>
+              <q-btn @click="disminuirCantidadProducto(props.row)" flat color="negative" icon="horizontal_rule">
+                <q-tooltip>Disminuir la cantidad de productos</q-tooltip>
+              </q-btn>
+            </q-td>
+          </template>
+        </q-table>
+      </div>
 
-        <div class="row q-my-sm">
-          <q-card-section class="col-6 q-pt-none">
-          <p class="text-h4">{{`Total: $${sumarTotal(ventaObj?.productos || []) }`}}</p>
-          </q-card-section>
-        </div>
-        <q-card-actions align="right">
-          <q-btn
-            label="Guardar venta"
-            @click="guardarVenta"
-            color="primary"
-            v-close-popup
-          />
-        </q-card-actions>
-       </q-card>
-     </q-dialog>
-  </template>
+      <div class="row q-my-sm">
+        <q-card-section class="col-6 q-pt-none">
+          <p class="text-h4">{{ `Total: $${sumarTotal(ventaObj?.productos || [])}` }}</p>
+        </q-card-section>
+      </div>
+      <q-card-actions align="right">
+        <q-btn label="Guardar venta" @click="guardarVenta" color="primary" v-close-popup />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+</template>
 
 <script>
 import { ref, reactive, computed } from 'vue'
@@ -132,7 +89,7 @@ export default {
     const modalVentas = ref(false)
     const ventaObj = reactive({
       clienteId: null,
-      productos: null,
+      productos: [],
       total: 0,
       fecha: '',
       cashback: 0.0
@@ -197,8 +154,8 @@ export default {
         }
       })
     })
-    const productosOpciones = computed(() => {
-      return productos.value.map(producto => {
+    const productosOpciones = ref(
+      productos.value.map(producto => {
         return {
           id: producto._id,
           label: producto.nombreProducto,
@@ -208,19 +165,27 @@ export default {
           total: producto.precio
         }
       })
-    })
-
+    )
     const clientesNuevos = ref(clientesOpciones.value)
     const productosNuevos = ref(productosOpciones.value)
-
     const abrir = (esNuevoRegistro) => {
       const ventaNueva = {
-        _id: '',
         clienteId: null,
         productos: [],
         total: 0,
         fecha: '',
         cashback: 0.0
+      }
+
+      if (nuevoRegistro.value && ventaObj.productos.length > 0) {
+        // limpiar el estado
+        for (const producto of ventaObj.productos) {
+          producto.cantidad = 1
+          producto.total = producto.precio
+        }
+      }
+      if (!esNuevoRegistro) {
+        ventaNueva._id = null
       }
       Object.keys(venta.value || ventaObj).forEach(key => {
         ventaObj[key] = editarRegistros(ventaNueva, venta.value, esNuevoRegistro)[key]

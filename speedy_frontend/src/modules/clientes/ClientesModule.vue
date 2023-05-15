@@ -80,7 +80,7 @@ const columns = [
   {
     name: 'invitadoPorId',
     label: 'Invitado por',
-    field: row => row.invitadoPorId ? row.invitadoPorId.label : 'No fue invitado por alguien',
+    field: row => row.invitadoPor ? obtenerNombreCliente(row.invitadoPor) : 'No fue invitado por alguien',
     align: 'left',
     sortable: true
   },
@@ -125,6 +125,10 @@ const nuevoCliente = () => {
 const clienteEditarId = (id) => {
   obtenerClienteId(id)
   modalClientes.value.abrir(false)
+}
+const obtenerNombreCliente = (id) => {
+  const clienteNombre = clientes.value.find(cliente => cliente._id === id)
+  return clienteNombre?.nombreCliente
 }
 const confirmarEliminarCliente = (cliente) => {
   notificacion.dialog({
