@@ -82,7 +82,6 @@ import { useVentasStore } from 'src/stores/ventas'
 import { editarRegistros } from 'src/helpers/editarRegistros'
 import { storeToRefs } from 'pinia'
 import { filtradoBusquedaObj } from 'src/helpers/filtradoBusquedaObj'
-// import daysjs from 'dayjs'
 
 export default {
   setup () {

@@ -135,6 +135,7 @@ p{
 .cards-dashboard {
     display: grid;
     gap: 1.5rem;
+    margin-bottom: 2rem;
     @include adaptar(768px) {
        grid-template-columns: repeat( 3,1fr );
     

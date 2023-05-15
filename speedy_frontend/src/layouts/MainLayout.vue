@@ -65,19 +65,20 @@ const useProducto = useProductosStore()
 const { obtenerProductos } = useProducto
 
 const useVenta = useVentasStore()
-const { obtenerVentas } = useVenta
+const { obtenerVentas, obtenerVentasCliente } = useVenta
 
 const logout = () => {
   router.push('/')
   cerrarSesion()
 }
-onMounted(() => {
-  autenticarUsuario()
+onMounted(async () => {
+  await autenticarUsuario()
   obtenerRoles()
   obtenerClientes()
   obtenerCategorias()
   obtenerProductos()
   obtenerVentas()
+  obtenerVentasCliente(usuarioAutenticado?.value?.usuario?._id)
 })
 const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value
