@@ -59,7 +59,7 @@
         <q-card-section class="contenido-card">
           <span class="material-icons text-primary">person</span>
           <h3>Socios invitados</h3>
-          <p class="text-primary">{{ usuarioAutenticado?.usuario?.invitadosCantidad }}</p>
+          <p class="text-primary">{{ usuarioAutenticado?.usuario?.invitados.length }}</p>
         </q-card-section>
       </q-card>
 
@@ -94,24 +94,14 @@
           </q-card-section>
           <div class="q-pa-md">
             <div class="q-gutter-md">
-              <q-card class="q-py-sm q-px-md invitado-card" v-if="usuarioAutenticado?.usuario?.clienteInvitadoUno">
-                <q-card-section class="q-pa-md">
-                  <div class="text-h4" >{{ usuarioAutenticado?.usuario?.clienteInvitadoUno?.nombreCliente }}</div>
-                  <div class="text-subtitle4 text-grey">Invitado por {{ usuarioAutenticado?.usuario?.nombreCliente }}
-                  </div>
-                </q-card-section>
-              </q-card>
-              <q-card class="q-py-sm q-px-md invitado-card" v-if="usuarioAutenticado?.usuario?.clienteInvitadoDos">
-                <q-card-section class="q-pa-md">
-                  <div class="text-h4">{{ usuarioAutenticado?.usuario?.clienteInvitadoDos?.nombreCliente }}</div>
-                  <div class="text-subtitle4 text-grey">Invitado por {{ usuarioAutenticado?.usuario?.nombreCliente }}
-                  </div>
-                </q-card-section>
-              </q-card>
-              <q-card class="q-py-sm q-px-md invitado-card" v-if="usuarioAutenticado?.usuario?.clienteInvitadoTres">
-                <q-card-section class="q-pa-md">
-                  <div class="text-h4">{{ usuarioAutenticado?.usuario?.clienteInvitadoTres?.nombreCliente }}</div>
-                  <div class="text-subtitle4 text-grey">Invitado por {{ usuarioAutenticado?.usuario?.nombreCliente }}
+              <q-card class="q-py-sm q-px-md invitado-card" v-for="(cliente, index) in usuarioAutenticado?.usuario.invitados" :key="index">
+                <q-card-section class="q-pa-md card-section">
+                  <div class="text-h4" ><strong>Nombre: </strong>{{ cliente?.cliente?.nombreCliente }}</div>
+                  <div class="text-h4" ><strong>Correo: </strong>{{ cliente?.cliente?.correo }}</div>
+                  <div class="text-h4" ><strong>Teléfono: </strong>{{ cliente?.cliente?.telefono }}</div>
+                  <div class="text-h4" ><strong>Tipo de Membresia: </strong>{{ cliente?.cliente?.tipoMembresia }}</div>
+                  <div class="text-h4" ><strong>Cantidad que han invitado: </strong>{{ cliente?.cliente?.invitados.length}}</div>
+                  <div class="text-subtitle4 text-grey">Invitado por {{ buscarCliente(cliente?.cliente?.invitadoPor) }}
                   </div>
                 </q-card-section>
               </q-card>
@@ -143,6 +133,10 @@ const { ventaDia, ventasCliente } = storeToRefs(useVenta)
 
 const formatoMoneda = ref(new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }))
 
+const buscarCliente = (id) => {
+  const cliente = clientes.value.find(cliente => cliente._id === id)
+  return cliente?.nombreCliente
+}
 onMounted(() => {
   obtenerVentaDia()
 })
@@ -157,9 +151,12 @@ onMounted(() => {
 }
 .invitado-card {
   background-color: #F7F9FC;
-  border-left: 4px solid #00C853;
+  border-left: 4px solid #013565;
   border-radius: 4px;
   color: #616161;
+  margin-bottom: 10px;
+}
+.card-section div {
   margin-bottom: 10px;
 }
 </style>

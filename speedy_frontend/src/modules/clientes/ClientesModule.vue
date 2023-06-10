@@ -87,7 +87,7 @@ const columns = [
   {
     name: 'invitados',
     label: 'Cantidad de invitados',
-    field: 'invitadosCantidad',
+    field: row => row.invitados.length,
     align: 'left',
     sortable: true
   },
