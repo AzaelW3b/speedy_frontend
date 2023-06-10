@@ -109,7 +109,7 @@
             <label>Selecciona el cliente que invito</label>
               <q-select
                   outlined
-                  v-model="clienteObj.invitadoPorId"
+                  v-model="clienteObj.invitadoPor"
                   use-input
                   input-debounce="0"
                   label="Selecciona el cliente que invito"
@@ -161,10 +161,8 @@ export default {
       fueInvitado: false,
       invitadoPor: null,
       tipoMembresia: '',
-      clienteInvitadoUno: null,
-      clienteInvitadoDos: null,
-      clienteInvitadoTres: null,
-      invitadosCantidad: 0,
+      invitados: [],
+      niveles: 0,
       rol: 'socio'
 
     })
@@ -192,12 +190,10 @@ export default {
         correo: '',
         password: 'speedy123',
         fueInvitado: false,
-        tipoMembresia: '',
         invitadoPor: null,
-        clienteInvitadoUno: null,
-        clienteInvitadoDos: null,
-        clienteInvitadoTres: null,
-        invitadosCantidad: 0,
+        tipoMembresia: '',
+        invitados: [],
+        niveles: 0,
         rol: 'socio'
 
       }
