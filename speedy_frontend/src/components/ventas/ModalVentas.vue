@@ -8,8 +8,9 @@
           <q-separator />
         </div>
       </q-card-section>
+      {{ productoVenta }}
 
-      <div class="row q-my-sm">
+      <!-- <div class="row q-my-sm">
         <q-card-section class="col-6 q-pt-none">
           <label>Cliente</label>
           <q-select outlined v-model="ventaObj.clienteId" use-input input-debounce="0" label="Selecciona el cliente"
@@ -38,14 +39,14 @@
             </template>
           </q-select>
         </q-card-section>
-      </div>
-      <div class="row q-my-sm">
+      </div> -->
+      <!-- <div class="row q-my-sm">
         <q-card-section class="col-12 q-pt-none">
           <label>Fecha de compra</label>
           <q-input outlined type="date" v-model="ventaObj.fecha" label="Fecha de compra" />
 
         </q-card-section>
-      </div>
+      </div> -->
 
       <div class="q-pa-md">
         <q-table v-if="ventaObj?.productos.length > 0" :rows="ventaObj?.productos" :columns="columns" row-key="name">
@@ -79,7 +80,7 @@ import { ref, reactive, computed } from 'vue'
 import { useClientesStore } from 'src/stores/clientes'
 import { useProductosStore } from 'src/stores/productos'
 import { useVentasStore } from 'src/stores/ventas'
-import { editarRegistros } from 'src/helpers/editarRegistros'
+// import { editarRegistros } from 'src/helpers/editarRegistros'
 import { storeToRefs } from 'pinia'
 import { filtradoBusquedaObj } from 'src/helpers/filtradoBusquedaObj'
 
@@ -98,9 +99,9 @@ export default {
 
     const columns = [
       {
-        name: 'label',
+        name: 'nombreProducto',
         label: 'Producto',
-        field: 'label',
+        field: 'nombreProducto',
         align: 'left',
         sortable: true
       },
@@ -136,10 +137,10 @@ export default {
 
     const useVentas = useVentasStore()
     const { guardarVentas, editarVentas } = useVentas
-    const { venta } = storeToRefs(useVentas)
+    // const { venta } = storeToRefs(useVentas)
     const useProductos = useProductosStore()
-    // const { guardarProductos } = useProductos
-    const { productos } = storeToRefs(useProductos)
+    // const { buscarProductoCodigo } = useProductos
+    const { productos, productoVenta } = storeToRefs(useProductos)
 
     const useClientes = useClientesStore()
     const { clientes } = storeToRefs(useClientes)
@@ -165,33 +166,59 @@ export default {
         }
       })
     )
+
     const clientesNuevos = ref(clientesOpciones.value)
     const productosNuevos = ref(productosOpciones.value)
-    const abrir = (esNuevoRegistro) => {
+
+    const abrir = (informacion) => {
+      const { abrir, codigo } = informacion
+      const productoEncontrado = productos.value.find(producto => producto.codigoBarras === codigo)
+
       const ventaNueva = {
-        clienteId: null,
-        productos: [],
-        total: 0,
-        fecha: '',
-        cashback: 0.0
+        ...productoEncontrado,
+        cantidad: 1,
+        total: productoEncontrado.precio
       }
 
-      if (nuevoRegistro.value && ventaObj.productos.length > 0) {
-        // limpiar el estado
-        for (const producto of ventaObj.productos) {
-          producto.cantidad = 1
-          producto.total = producto.precio
+      const productoExiste = ventaObj?.productos?.findIndex(producto => producto.codigoBarras === ventaNueva.codigoBarras)
+
+      if (productoExiste !== -1) {
+        for (const venta of ventaObj?.productos) {
+          if (venta.codigoBarras === ventaNueva.codigoBarras) {
+            const precioBase = parseFloat(venta.precio)
+            venta.cantidad++
+            venta.total = precioBase * venta.cantidad
+          }
         }
+      } else {
+        ventaObj.productos = [...ventaObj.productos, ventaNueva]
       }
-      if (!esNuevoRegistro) {
-        ventaNueva._id = null
-      }
-      Object.keys(venta.value || ventaObj).forEach(key => {
-        ventaObj[key] = editarRegistros(ventaNueva, venta.value, esNuevoRegistro)[key]
-      })
+      console.log(productoExiste)
+
+      // const ventaNueva = {
+      //   clienteId: null,
+      //   productos: [],
+      //   total: 0,
+      //   fecha: '',
+      //   cashback: 0.0
+      // }
+
+      // if (nuevoRegistro.value && ventaObj.productos.length > 0) {
+      //   // limpiar el estado
+      //   for (const producto of ventaObj.productos) {
+      //     producto.cantidad = 1
+      //     producto.total = producto.precio
+      //   }
+      // }
+      // if (!esNuevoRegistro) {
+      //   ventaNueva._id = null
+      // }
+      // Object.keys(venta.value || ventaObj).forEach(key => {
+      //   ventaObj[key] = editarRegistros(ventaNueva, venta.value, esNuevoRegistro)[key]
+      // })
 
       modalVentas.value = true
-      nuevoRegistro.value = esNuevoRegistro
+      nuevoRegistro.value = abrir
     }
     const parametrosFiltradosClientes = (val, update) => {
       filtradoBusquedaObj(val, update, clientesOpciones.value, clientesNuevos)
@@ -229,6 +256,11 @@ export default {
       return ventaObj.total
     }
 
+    // lee un archivo xml en donde los tags del Child expongan
+    // datos de alumnos y su perfil academico, como escuelaSecundaria,
+    // promedio, municpio, nombreAlumno, semestre, el formulario solo debe registrar alumnos en
+    // los que su promedio sea mayor de 8, edad de entre 14 y 16 años y que vengan de los municipios de
+    // Veracruz, Boca del Rio y medellin.
     const aumentarCantidadProducto = (producto) => {
       const productoOriginal = { ...producto }
       const precioBase = parseFloat(productoOriginal.precio)
@@ -250,6 +282,7 @@ export default {
       clientesNuevos,
       productosNuevos,
       columns,
+      productoVenta,
       // metodos
       abrir,
       guardarVenta,

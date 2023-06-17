@@ -40,7 +40,7 @@
           </template>
         </q-table>
         <ModalClientes ref="modalClientes"/>
-        <!-- <FormularioEntrevista ref="modelEntrevista"></FormularioEntrevista> -->
+
       </div>
     </q-layout>
   </template>

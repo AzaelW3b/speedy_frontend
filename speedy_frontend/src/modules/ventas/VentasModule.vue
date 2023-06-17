@@ -46,16 +46,20 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useQuasar } from 'quasar'
 import { storeToRefs } from 'pinia'
 import { useVentasStore } from 'src/stores/ventas'
+// import { useProductosStore } from 'src/stores/productos'
 import { formatearFecha } from '../../helpers/formatearFecha'
 import ModalVentas from 'src/components/ventas/ModalVentas.vue'
 
 const useVenta = useVentasStore()
 const { obtenerVentasId, eliminarVentas, obtenerClienteVenta } = useVenta
 const { ventas } = storeToRefs(useVenta)
+
+// const useProducto = useProductosStore()
+// const { buscarProductoCodigo } = useProducto
 
 const formatoMoneda = ref(new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }))
 
@@ -103,15 +107,36 @@ const columns = [
     sortable: true
   }
 ]
+onMounted(() => {
+  let ultimoCodigoScanneado = ''
 
-// const modelEntrevista = ref(null)
+  document.addEventListener('keypress', (e) => {
+    const charCode = typeof e.which === 'number' ? e.which : e.keyCode
+
+    if (charCode !== 13) {
+      ultimoCodigoScanneado += String.fromCharCode(charCode)
+    } else {
+      console.log(ultimoCodigoScanneado)
+      procesarCodigo(ultimoCodigoScanneado)
+      ultimoCodigoScanneado = ''
+    }
+  })
+})
 const modalVentas = ref(null)
 const buscar = ref('')
 const notificacion = useQuasar()
 
-const nuevaVenta = () => {
-  modalVentas.value.abrir(true)
+// const nuevaVenta = () => {
+//   modalVentas.value.abrir(true)
+// }
+function procesarCodigo (codigo) {
+  modalVentas.value.abrir({ abrir: true, codigo })
+  console.log('Código escaneado:', codigo)
+  // buscarProductoCodigo(codigo)
 }
+// const manejoCodigoBarras = (codigoBarras) => {
+//   console.log(codigoBarras)
+// }
 const ventaEditarId = (id) => {
   obtenerVentasId(id)
   modalVentas.value.abrir(false)

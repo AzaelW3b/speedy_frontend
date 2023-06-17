@@ -5,6 +5,7 @@ import { api } from 'src/boot/axios'
 export const useProductosStore = defineStore('productos', () => {
   const productos = ref([])
   const producto = ref(null)
+  const productoVenta = ref(null)
 
   // guardar productos
   const guardarProductos = async (producto) => {
@@ -51,15 +52,22 @@ export const useProductosStore = defineStore('productos', () => {
   const obtenerProductosId = (id) => {
     producto.value = productos.value.find(producto => producto._id === id)
   }
+
+  // buscar producto por código de barras
+  const buscarProductoCodigo = (codigo) => {
+    productoVenta.value = productos.value.find(producto => producto.codigoBarras === codigo)
+  }
   return {
     // states
     productos,
     producto,
+    productoVenta,
     // metodos
     guardarProductos,
     editarProductos,
     eliminarProductos,
     obtenerProductosId,
-    obtenerProductos
+    obtenerProductos,
+    buscarProductoCodigo
   }
 })
