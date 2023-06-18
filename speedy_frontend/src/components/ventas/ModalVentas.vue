@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="modalVentas">
+  <q-dialog persistent v-model="modalVentas">
     <q-card class="full-width">
       <q-card-section class="bg-primary text-white">
         <q-btn icon="close" flat round dense v-close-popup />
@@ -70,6 +70,7 @@
       </div>
       <q-card-actions align="right">
         <q-btn label="Guardar venta" @click="guardarVenta" color="primary" v-close-popup />
+        <q-btn label="Cancelar Venta" @click="limpiarEstadoProductos"  v-close-popup />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -87,11 +88,12 @@ import { filtradoBusquedaObj } from 'src/helpers/filtradoBusquedaObj'
 export default {
   setup () {
     const modalVentas = ref(false)
+    const generandoNuevaVenta = ref(false)
     const ventaObj = reactive({
       clienteId: null,
       productos: [],
       total: 0,
-      fecha: '',
+      // fecha: Date.now(),
       cashback: 0.0
 
     })
@@ -193,7 +195,6 @@ export default {
       } else {
         ventaObj.productos = [...ventaObj.productos, ventaNueva]
       }
-      console.log(productoExiste)
 
       // const ventaNueva = {
       //   clienteId: null,
@@ -218,6 +219,7 @@ export default {
       // })
 
       modalVentas.value = true
+      generandoNuevaVenta.value = true
       nuevoRegistro.value = abrir
     }
     const parametrosFiltradosClientes = (val, update) => {
@@ -229,9 +231,14 @@ export default {
         const ventaNueva = { ...ventaObj }
         ventaNueva.clienteId = ventaNueva?.clienteId?.value
         guardarVentas(ventaNueva)
+        generandoNuevaVenta.value = false
+        limpiarEstadoProductos()
       } else {
         editarVentas(ventaObj)
       }
+    }
+    const limpiarEstadoProductos = () => {
+      ventaObj.productos = []
     }
     const createValue = (val, done) => {
       if (val.length > 2) {
@@ -256,11 +263,6 @@ export default {
       return ventaObj.total
     }
 
-    // lee un archivo xml en donde los tags del Child expongan
-    // datos de alumnos y su perfil academico, como escuelaSecundaria,
-    // promedio, municpio, nombreAlumno, semestre, el formulario solo debe registrar alumnos en
-    // los que su promedio sea mayor de 8, edad de entre 14 y 16 años y que vengan de los municipios de
-    // Veracruz, Boca del Rio y medellin.
     const aumentarCantidadProducto = (producto) => {
       const productoOriginal = { ...producto }
       const precioBase = parseFloat(productoOriginal.precio)
@@ -283,6 +285,7 @@ export default {
       productosNuevos,
       columns,
       productoVenta,
+      limpiarEstadoProductos,
       // metodos
       abrir,
       guardarVenta,
