@@ -21,6 +21,14 @@
           <template v-slot:body-cell-acciones="props">
             <q-td>
               <q-btn
+                @click="generarMembresia(props.row)"
+                flat
+                color="dark"
+                icon="card_membership"
+              >
+                <q-tooltip>{{ `Generar la membresia del cliente ${props.row.nombreCliente}` }}</q-tooltip>
+              </q-btn>
+              <q-btn
                 @click="clienteEditarId(props.row._id)"
                 flat
                 color="dark"
@@ -50,6 +58,10 @@ import { useQuasar } from 'quasar'
 import { storeToRefs } from 'pinia'
 import { useClientesStore } from 'src/stores/clientes'
 import ModalClientes from '../../components/clientes/ModalClientes.vue'
+import { PDFDocument } from 'pdf-lib'
+import jsbarcode from 'jsbarcode'
+// , StandardFonts
+// import speedyImg from '../../assets/speedy.png'
 
 const useClientes = useClientesStore()
 const { obtenerClienteId, eliminarClientes } = useClientes
@@ -87,7 +99,7 @@ const columns = [
   {
     name: 'invitados',
     label: 'Cantidad de invitados',
-    field: row => row.invitados.length,
+    field: row => row?.invitados?.length,
     align: 'left',
     sortable: true
   },
@@ -129,6 +141,98 @@ const clienteEditarId = (id) => {
 const obtenerNombreCliente = (id) => {
   const clienteNombre = clientes.value.find(cliente => cliente._id === id)
   return clienteNombre?.nombreCliente
+}
+const generarMembresia = async (cliente) => {
+  const jpgUrl = 'https://scontent-qro1-2.xx.fbcdn.net/v/t39.30808-6/300852363_1113950009545109_2152687438122050667_n.jpg?_nc_cat=101&cb=99be929b-59f725be&ccb=1-7&_nc_sid=09cbfe&_nc_eui2=AeFBNOCiXIql1Ct0biQd1ydU1LoWQHC64MvUuhZAcLrgy4dimOeKJ5Fi3X5kArPnDMxzUjwo9UMBBHQYsLMmU03T&_nc_ohc=38t9sgXOaYQAX-xWYda&_nc_ht=scontent-qro1-2.xx&oh=00_AfDWDUG38ISf99EBchSK2cyHT1yQFksqjiugeq5WlfXHTw&oe=6494FDFB'
+  const jpgImageBytes = await fetch(jpgUrl).then(res => res.arrayBuffer())
+  const pdfDoc = await PDFDocument.create()
+
+  const pageWidth = 85.6
+  const pageHeight = 53.98
+  const pageOne = pdfDoc.addPage([pageWidth, pageHeight])
+
+  const jpgImage = await pdfDoc.embedJpg(jpgImageBytes)
+
+  const jpgDims = jpgImage.scale(0.1)
+
+  const x = (pageWidth - jpgDims.width) / 2
+  const y = (pageHeight - jpgDims.height) / 2
+
+  pageOne.drawImage(jpgImage, {
+    x,
+    y,
+    width: jpgDims.width,
+    height: jpgDims.height
+  })
+
+  const pageTwo = pdfDoc.addPage([pageWidth, pageHeight])
+  const font = await pdfDoc.embedFont('Helvetica')
+  const size = 5
+  pageTwo.setFontSize(1)
+
+  const textWidth = font.widthOfTextAtSize(cliente.nombreCliente, size)
+  const x2 = (pageWidth - textWidth) / 2
+  const y2 = pageHeight - 20
+
+  pageTwo.drawText(cliente.nombreCliente, {
+    x: x2,
+    y: y2,
+    font,
+    size,
+    alignment: 'center'
+  })
+
+  const membresiaX = x2 + 4
+  const membresiaY = y2 - 8
+
+  pageTwo.drawText(`Membresia tipo ${cliente.tipoMembresia}`, {
+    x: membresiaX,
+    y: membresiaY,
+    font,
+    size,
+    alignment: 'left'
+  })
+
+  const correoX = membresiaX - 7
+  const correoY = membresiaY - 8
+
+  pageTwo.drawText(`${cliente.correo}`, {
+    x: correoX,
+    y: correoY,
+    font,
+    size,
+    alignment: 'left'
+  })
+  const barcodeCanvas = document.createElement('canvas')
+
+  jsbarcode(barcodeCanvas, cliente.codigoBarras, {
+    format: 'CODE128',
+    width: 1.5,
+    height: 30,
+    displayValue: false
+  })
+  const barcodeImage = await pdfDoc.embedPng(barcodeCanvas.toDataURL())
+  const barcodeDims = barcodeImage.scale(0.5)
+  const barcodeX = x2 + 10
+  const barcodeY = correoY - 30
+
+  pageTwo.drawImage(barcodeImage, {
+    x: barcodeX,
+    y: barcodeY,
+    width: barcodeDims.width,
+    height: barcodeDims.height
+  })
+
+  const pdfBytes = await pdfDoc.save()
+  const blob = new Blob([pdfBytes], { type: 'application/pdf' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+
+  link.href = url
+  link.download = `membresia${cliente.nombreCliente}.pdf`
+  link.click()
+
+  URL.revokeObjectURL(url)
 }
 const confirmarEliminarCliente = (cliente) => {
   notificacion.dialog({

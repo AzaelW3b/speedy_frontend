@@ -10,11 +10,9 @@ export const useClientesStore = defineStore('clientes', () => {
   const guardarClientes = async (cliente) => {
     try {
       if (cliente.fueInvitado) {
-        console.log(cliente)
         cliente.invitadoPor = cliente.invitadoPor.id
         const clienteQueInvito = cliente.invitadoPor
         const { data } = await api.post('/clientes', cliente)
-        console.log(clienteQueInvito)
         // buscamos el cliente que invito, para actualizar su información nivel 1
         const clienteQueInvitoObj = clientes.value.find(clienteInvito => clienteInvito._id === clienteQueInvito)
         // evaluamos si el que invito alguien más lo invito primero (para sacar el nivel 2)
@@ -33,7 +31,6 @@ export const useClientesStore = defineStore('clientes', () => {
 
           clienteQueInvitoObj.invitados =
             [...clienteQueInvitoObj.invitados, { cliente: data._id, nivel }]
-          console.log(clienteQueInvito)
           // actualizamos el registro
           const respuesta = await api.put(`/clientes/${clienteQueInvitoObj._id}`, clienteQueInvitoObj)
           console.log(respuesta.data)
