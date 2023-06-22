@@ -12,12 +12,13 @@
   "dependencies": {
     "@quasar/extras": "^1.0.0",
     "axios": "^1.2.1",
+    "base64-img": "^1.0.4",
+    "canvas": "^2.11.2",
     "dayjs": "^1.11.7",
     "jsbarcode": "^3.11.5",
-    "pdf-lib": "^1.17.1",
+    "jspdf": "^2.5.1",
     "pinia": "^2.0.11",
     "quasar": "^2.6.0",
-    "usb": "^2.9.0",
     "uuid": "^9.0.0",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0"
