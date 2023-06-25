@@ -19,9 +19,6 @@ export const useClientesStore = defineStore('clientes', () => {
         const clientePrincipal = clienteQueInvitoObj.invitadoPor ? clientes.value.find(clientePrincipalIndex => clientePrincipalIndex._id === clienteQueInvitoObj.invitadoPor) : null
         // evaluar si el cliente que lo invito, alguien más lo invito nivel 3
         const primerCliente = clientePrincipal?.invitadoPor ? clientes.value.find(primercliente => primercliente._id === clientePrincipal.invitadoPor) : null
-        console.log('cliente principal: ', clientePrincipal)
-        console.log('cliente que invito: ', clienteQueInvitoObj)
-        console.log('primer cliente', primerCliente)
 
         // evaluación del nivel 1
         let nivel = 0

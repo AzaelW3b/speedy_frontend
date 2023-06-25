@@ -31,7 +31,7 @@ const generateAndDownloadBarcodeInPDF = (cliente) => {
 
     doc.addImage(realImage, 'PNG', 3, 41, 80, 10)
 
-    doc.save('barcode.pdf')
+    doc.save(`Membresia ${cliente.nombreCliente}`)
   })
 }
 

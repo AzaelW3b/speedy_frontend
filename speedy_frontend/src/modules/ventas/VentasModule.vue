@@ -5,13 +5,22 @@
         <h4>Registro de ventas</h4>
       </div>
       <q-separator color="primary" class="q-my-md" inset />
-      <q-btn
-        label="Registrar nueva venta"
-        color="primary"
-        class="q-my-md"
-        icon="add"
-        @click="nuevaVenta"
-      />
+      <div class="cards-ventas">
+        <q-card class="card">
+          <q-card-section class="contenido-card">
+            <span class="material-icons text-primary">payments</span>
+            <h3>Ventas del dia</h3>
+            <p class="text-primary">{{ ventaDia?.cantidadVentas }}</p>
+          </q-card-section>
+        </q-card>
+        <q-card class="card">
+          <q-card-section class="contenido-card">
+            <span class="material-icons text-primary">payments</span>
+            <h3>Ingresos del dia</h3>
+            <p class="text-primary">{{ formatoMoneda.format(ventaDia?.totalVentasDia) }}</p>
+          </q-card-section>
+      </q-card>
+    </div>
 
       <q-table
         color="primary"
@@ -21,14 +30,14 @@
       >
       <template v-slot:body-cell-acciones="props">
           <q-td>
-            <q-btn
+            <!-- <q-btn
               @click="ventaEditarId(props.row._id)"
               flat
               color="dark"
               icon="edit"
             >
               <q-tooltip>{{ `Editar al cliente ${props.row.nombreProducto}` }}</q-tooltip>
-            </q-btn>
+            </q-btn> -->
             <q-btn
               @click="confirmarEliminarVenta(props.row)"
               flat
@@ -55,7 +64,7 @@ import { formatearFecha } from '../../helpers/formatearFecha'
 import ModalVentas from 'src/components/ventas/ModalVentas.vue'
 
 const useVenta = useVentasStore()
-const { obtenerVentasId, eliminarVentas, obtenerClienteVenta } = useVenta
+const { eliminarVentas, obtenerClienteVenta, ventaDia } = useVenta
 const { ventas } = storeToRefs(useVenta)
 
 // const useProducto = useProductosStore()
@@ -112,11 +121,9 @@ onMounted(() => {
 
   document.addEventListener('keypress', (e) => {
     const charCode = typeof e.which === 'number' ? e.which : e.keyCode
-
     if (charCode !== 13) {
       ultimoCodigoScanneado += String.fromCharCode(charCode)
     } else {
-      console.log(ultimoCodigoScanneado)
       procesarCodigo(ultimoCodigoScanneado)
       ultimoCodigoScanneado = ''
     }
@@ -126,21 +133,16 @@ const modalVentas = ref(null)
 const buscar = ref('')
 const notificacion = useQuasar()
 
-// const nuevaVenta = () => {
-//   modalVentas.value.abrir(true)
-// }
 function procesarCodigo (codigo) {
-  modalVentas.value.abrir({ abrir: true, codigo })
   console.log('Código escaneado:', codigo)
-  // buscarProductoCodigo(codigo)
+
+  modalVentas.value.abrir({ abrir: true, codigo })
 }
-// const manejoCodigoBarras = (codigoBarras) => {
-//   console.log(codigoBarras)
+
+// const ventaEditarId = (id) => {
+//   obtenerVentasId(id)
+//   modalVentas.value.abrir(false)
 // }
-const ventaEditarId = (id) => {
-  obtenerVentasId(id)
-  modalVentas.value.abrir(false)
-}
 
 const confirmarEliminarVenta = (venta) => {
   notificacion.dialog({

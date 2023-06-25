@@ -8,7 +8,27 @@
           <q-separator />
         </div>
       </q-card-section>
-      {{ productoVenta }}
+      <q-card flat bordered class="my-card" v-if="cliente">
+      <q-card-section>
+        <div class="text-h4">Socio: </div>
+      </q-card-section>
+
+      <q-card-section class="q-pt-none">
+       {{ cliente?.nombreCliente }}
+      </q-card-section>
+
+      <q-separator inset />
+
+      <q-card-section>
+        {{ `Tipo de membresia ${cliente?.tipoMembresia}` }}
+      </q-card-section>
+    </q-card>
+    <q-card flat bordered class="my-card" v-else>
+      <q-card-section>
+        <div class="text-h4 text-center"> Captura o vuelve capturar la membresia del Socio </div>
+      </q-card-section>
+    </q-card>
+      <!-- {{ cliente.nombreCliente }} -->
 
       <!-- <div class="row q-my-sm">
         <q-card-section class="col-6 q-pt-none">
@@ -89,6 +109,7 @@ export default {
   setup () {
     const modalVentas = ref(false)
     const generandoNuevaVenta = ref(false)
+    const cliente = ref(null)
     const ventaObj = reactive({
       clienteId: null,
       productos: [],
@@ -173,13 +194,23 @@ export default {
     const productosNuevos = ref(productosOpciones.value)
 
     const abrir = (informacion) => {
+      modalVentas.value = true
       const { abrir, codigo } = informacion
-      const productoEncontrado = productos.value.find(producto => producto.codigoBarras === codigo)
 
+      let clienteEncontrado = null
+      let productoEncontrado = null
+      // evaluación si es un código de barras de la membresia
+      if (codigo.includes('S')) {
+        clienteEncontrado = clientes.value.find(cliente => cliente.folio === codigo)
+      } else {
+        productoEncontrado = productos.value.find(producto => producto.codigoBarras === codigo)
+      }
+      cliente.value = clienteEncontrado
+      console.log('le producte', productoEncontrado)
       const ventaNueva = {
         ...productoEncontrado,
         cantidad: 1,
-        total: productoEncontrado.precio
+        total: productoEncontrado?.precio
       }
 
       const productoExiste = ventaObj?.productos?.findIndex(producto => producto.codigoBarras === ventaNueva.codigoBarras)
@@ -193,6 +224,8 @@ export default {
           }
         }
       } else {
+        if (ventaNueva.total === undefined) return
+
         ventaObj.productos = [...ventaObj.productos, ventaNueva]
       }
 
@@ -218,7 +251,6 @@ export default {
       //   ventaObj[key] = editarRegistros(ventaNueva, venta.value, esNuevoRegistro)[key]
       // })
 
-      modalVentas.value = true
       generandoNuevaVenta.value = true
       nuevoRegistro.value = abrir
     }
@@ -229,7 +261,7 @@ export default {
       ventaObj.cashback = ventaObj.total * 0.05
       if (nuevoRegistro.value) {
         const ventaNueva = { ...ventaObj }
-        ventaNueva.clienteId = ventaNueva?.clienteId?.value
+        ventaNueva.clienteId = cliente.value._id
         guardarVentas(ventaNueva)
         generandoNuevaVenta.value = false
         limpiarEstadoProductos()
@@ -286,6 +318,7 @@ export default {
       columns,
       productoVenta,
       limpiarEstadoProductos,
+      cliente,
       // metodos
       abrir,
       guardarVenta,
