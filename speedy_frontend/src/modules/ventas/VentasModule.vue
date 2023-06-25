@@ -5,7 +5,7 @@
         <h4>Registro de ventas</h4>
       </div>
       <q-separator color="primary" class="q-my-md" inset />
-      <div class="cards-ventas">
+      <div class="cards-dashboard">
         <q-card class="card">
           <q-card-section class="contenido-card">
             <span class="material-icons text-primary">payments</span>
@@ -20,6 +20,13 @@
             <p class="text-primary">{{ formatoMoneda.format(ventaDia?.totalVentasDia) }}</p>
           </q-card-section>
       </q-card>
+      <q-card class="card">
+          <q-card-section class="contenido-card">
+            <span class="material-icons text-primary">payments</span>
+            <h3>Total de todas las ventas</h3>
+            <p class="text-primary">{{ formatoMoneda.format(ventaDia?.totalVentasDia) }}</p>
+          </q-card-section>
+      </q-card>
     </div>
 
       <q-table
@@ -30,6 +37,14 @@
       >
       <template v-slot:body-cell-acciones="props">
           <q-td>
+            <q-btn
+              @click="verCompraCliente(props.row)"
+              flat
+              color="dark"
+              icon="visibility"
+            >
+              <q-tooltip>{{ `Ver compra del cliente ${obtenerClienteVenta(props.row.clienteId)}` }}</q-tooltip>
+            </q-btn>
             <!-- <q-btn
               @click="ventaEditarId(props.row._id)"
               flat
@@ -39,6 +54,7 @@
               <q-tooltip>{{ `Editar al cliente ${props.row.nombreProducto}` }}</q-tooltip>
             </q-btn> -->
             <q-btn
+              v-if="usuarioAutenticado?.usuario?.rol === 'admin'"
               @click="confirmarEliminarVenta(props.row)"
               flat
               color="negative"
@@ -50,6 +66,7 @@
         </template>
       </q-table>
       <ModalVentas ref="modalVentas"/>
+      <ModalVentaCliente ref="modalVerVentaCliente"/>
     </div>
   </q-layout>
 </template>
@@ -59,14 +76,18 @@ import { onMounted, ref } from 'vue'
 import { useQuasar } from 'quasar'
 import { storeToRefs } from 'pinia'
 import { useVentasStore } from 'src/stores/ventas'
+import { useAutenticacionStore } from 'src/stores/autenticaciones'
 // import { useProductosStore } from 'src/stores/productos'
 import { formatearFecha } from '../../helpers/formatearFecha'
 import ModalVentas from 'src/components/ventas/ModalVentas.vue'
+import ModalVentaCliente from 'src/components/ventas/ModalVentaCliente.vue'
 
 const useVenta = useVentasStore()
-const { eliminarVentas, obtenerClienteVenta, ventaDia } = useVenta
+const { eliminarVentas, obtenerClienteVenta, ventaDia, obtenerVentasId } = useVenta
 const { ventas } = storeToRefs(useVenta)
 
+const useAutenticacion = useAutenticacionStore()
+const { usuarioAutenticado } = storeToRefs(useAutenticacion)
 // const useProducto = useProductosStore()
 // const { buscarProductoCodigo } = useProducto
 
@@ -130,15 +151,19 @@ onMounted(() => {
   })
 })
 const modalVentas = ref(null)
+const modalVerVentaCliente = ref(null)
 const buscar = ref('')
 const notificacion = useQuasar()
 
 function procesarCodigo (codigo) {
   console.log('Código escaneado:', codigo)
-
+  if (codigo === '') return
   modalVentas.value.abrir({ abrir: true, codigo })
 }
-
+const verCompraCliente = (venta) => {
+  obtenerVentasId(venta._id)
+  modalVerVentaCliente.value.abrir()
+}
 // const ventaEditarId = (id) => {
 //   obtenerVentasId(id)
 //   modalVentas.value.abrir(false)

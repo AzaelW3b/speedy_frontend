@@ -53,7 +53,6 @@ export const useVentasStore = defineStore('ventas', () => {
     try {
       const { data } = await api.get(`/ventas/ventasCliente/${id}`)
       ventasCliente.value = data
-      console.log('aaaaaaaaaaa', data)
     } catch (error) {
       console.log(error)
     }
@@ -69,7 +68,7 @@ export const useVentasStore = defineStore('ventas', () => {
     const useCliente = useClientesStore()
     const { clientes } = storeToRefs(useCliente)
     const cliente = clientes.value.find(cliente => cliente._id === id)
-    console.log(cliente)
+
     return cliente?.nombreCliente
   }
 
@@ -77,6 +76,7 @@ export const useVentasStore = defineStore('ventas', () => {
     try {
       const { data } = await api.get('/ventas/ventasDia')
       ventaDia.value = data
+      console.log('se ejeecutooo')
     } catch (error) {
       console.log(error)
     }

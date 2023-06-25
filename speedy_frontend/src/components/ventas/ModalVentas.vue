@@ -9,18 +9,15 @@
         </div>
       </q-card-section>
       <q-card flat bordered class="my-card" v-if="cliente">
-      <q-card-section>
-        <div class="text-h4">Socio: </div>
-      </q-card-section>
 
-      <q-card-section class="q-pt-none">
-       {{ cliente?.nombreCliente }}
+      <q-card-section class="q-pt-md text-h4">
+       <b>Socio: </b>{{ cliente?.nombreCliente }}
       </q-card-section>
 
       <q-separator inset />
 
-      <q-card-section>
-        {{ `Tipo de membresia ${cliente?.tipoMembresia}` }}
+      <q-card-section class="text-h4">
+        <b>Tipo de membresia: </b>{{`${cliente?.tipoMembresia}` }}
       </q-card-section>
     </q-card>
     <q-card flat bordered class="my-card" v-else>
@@ -159,7 +156,7 @@ export default {
     ]
 
     const useVentas = useVentasStore()
-    const { guardarVentas, editarVentas } = useVentas
+    const { guardarVentas, editarVentas, obtenerVentaDia } = useVentas
     // const { venta } = storeToRefs(useVentas)
     const useProductos = useProductosStore()
     // const { buscarProductoCodigo } = useProductos
@@ -206,7 +203,6 @@ export default {
         productoEncontrado = productos.value.find(producto => producto.codigoBarras === codigo)
       }
       cliente.value = clienteEncontrado
-      console.log('le producte', productoEncontrado)
       const ventaNueva = {
         ...productoEncontrado,
         cantidad: 1,
@@ -225,7 +221,6 @@ export default {
         }
       } else {
         if (ventaNueva.total === undefined) return
-
         ventaObj.productos = [...ventaObj.productos, ventaNueva]
       }
 
@@ -268,6 +263,7 @@ export default {
       } else {
         editarVentas(ventaObj)
       }
+      obtenerVentaDia()
     }
     const limpiarEstadoProductos = () => {
       ventaObj.productos = []
@@ -327,6 +323,7 @@ export default {
       filterFn,
       sumarTotal,
       aumentarCantidadProducto,
+      obtenerVentaDia,
       disminuirCantidadProducto
 
     }
