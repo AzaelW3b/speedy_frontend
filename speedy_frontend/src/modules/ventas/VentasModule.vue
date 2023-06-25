@@ -29,6 +29,13 @@
       </q-card>
     </div>
 
+    <q-btn
+        label="Nueva venta con teclado"
+        color="primary"
+        class="q-my-md"
+        icon="add"
+        @click="nuevaVenta"
+      />
       <q-table
         color="primary"
         :rows="ventas"
@@ -45,14 +52,7 @@
             >
               <q-tooltip>{{ `Ver compra del cliente ${obtenerClienteVenta(props.row.clienteId)}` }}</q-tooltip>
             </q-btn>
-            <!-- <q-btn
-              @click="ventaEditarId(props.row._id)"
-              flat
-              color="dark"
-              icon="edit"
-            >
-              <q-tooltip>{{ `Editar al cliente ${props.row.nombreProducto}` }}</q-tooltip>
-            </q-btn> -->
+
             <q-btn
               v-if="usuarioAutenticado?.usuario?.rol === 'admin'"
               @click="confirmarEliminarVenta(props.row)"
@@ -77,7 +77,6 @@ import { useQuasar } from 'quasar'
 import { storeToRefs } from 'pinia'
 import { useVentasStore } from 'src/stores/ventas'
 import { useAutenticacionStore } from 'src/stores/autenticaciones'
-// import { useProductosStore } from 'src/stores/productos'
 import { formatearFecha } from '../../helpers/formatearFecha'
 import ModalVentas from 'src/components/ventas/ModalVentas.vue'
 import ModalVentaCliente from 'src/components/ventas/ModalVentaCliente.vue'
@@ -88,8 +87,6 @@ const { ventas, ventaDia } = storeToRefs(useVenta)
 
 const useAutenticacion = useAutenticacionStore()
 const { usuarioAutenticado } = storeToRefs(useAutenticacion)
-// const useProducto = useProductosStore()
-// const { buscarProductoCodigo } = useProducto
 
 const formatoMoneda = ref(new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }))
 
@@ -162,12 +159,11 @@ function procesarCodigo (codigo) {
 }
 const verCompraCliente = (venta) => {
   obtenerVentasId(venta._id)
+  modalVentas.value.abrir()
+}
+const nuevaVenta = () => {
   modalVerVentaCliente.value.abrir()
 }
-// const ventaEditarId = (id) => {
-//   obtenerVentasId(id)
-//   modalVentas.value.abrir(false)
-// }
 const ventasTotales = () => {
   const total = ventas?.value?.reduce((suma, venta) => venta.total + suma, 0)
   return total
