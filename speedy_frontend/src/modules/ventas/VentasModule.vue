@@ -8,23 +8,23 @@
       <div class="cards-dashboard">
         <q-card class="card">
           <q-card-section class="contenido-card">
-            <span class="material-icons text-primary">payments</span>
+            <span class="material-icons text-primary">shopping_bag</span>
             <h3>Ventas del dia</h3>
             <p class="text-primary">{{ ventaDia?.cantidadVentas }}</p>
           </q-card-section>
         </q-card>
         <q-card class="card">
           <q-card-section class="contenido-card">
-            <span class="material-icons text-primary">payments</span>
+            <span class="material-icons text-primary">currency_exchange </span>
             <h3>Ingresos del dia</h3>
             <p class="text-primary">{{ formatoMoneda.format(ventaDia?.totalVentasDia) }}</p>
           </q-card-section>
       </q-card>
       <q-card class="card">
           <q-card-section class="contenido-card">
-            <span class="material-icons text-primary">payments</span>
+            <span class="material-icons text-primary">attach_money</span>
             <h3>Total de todas las ventas</h3>
-            <p class="text-primary">{{ formatoMoneda.format(ventaDia?.totalVentasDia) }}</p>
+            <p class="text-primary">{{ formatoMoneda.format(ventasTotales()) }}</p>
           </q-card-section>
       </q-card>
     </div>
@@ -83,8 +83,8 @@ import ModalVentas from 'src/components/ventas/ModalVentas.vue'
 import ModalVentaCliente from 'src/components/ventas/ModalVentaCliente.vue'
 
 const useVenta = useVentasStore()
-const { eliminarVentas, obtenerClienteVenta, ventaDia, obtenerVentasId } = useVenta
-const { ventas } = storeToRefs(useVenta)
+const { eliminarVentas, obtenerClienteVenta, obtenerVentasId } = useVenta
+const { ventas, ventaDia } = storeToRefs(useVenta)
 
 const useAutenticacion = useAutenticacionStore()
 const { usuarioAutenticado } = storeToRefs(useAutenticacion)
@@ -168,7 +168,10 @@ const verCompraCliente = (venta) => {
 //   obtenerVentasId(id)
 //   modalVentas.value.abrir(false)
 // }
-
+const ventasTotales = () => {
+  const total = ventas?.value?.reduce((suma, venta) => venta.total + suma, 0)
+  return total
+}
 const confirmarEliminarVenta = (venta) => {
   notificacion.dialog({
     title: '¿Deseas eliminar la venta?',
