@@ -25,45 +25,6 @@
         <div class="text-h4 text-center"> Captura o vuelve capturar la membresia del Socio </div>
       </q-card-section>
     </q-card>
-      <!-- {{ cliente.nombreCliente }} -->
-
-      <!-- <div class="row q-my-sm">
-        <q-card-section class="col-6 q-pt-none">
-          <label>Cliente</label>
-          <q-select outlined v-model="ventaObj.clienteId" use-input input-debounce="0" label="Selecciona el cliente"
-            :options="clientesNuevos" @filter="parametrosFiltradosClientes" behavior="menu">
-            <template v-slot:no-option>
-              <q-item>
-                <q-item-section class="text-grey">
-                  No se encontraron resultados
-                </q-item-section>
-              </q-item>
-            </template>
-          </q-select>
-        </q-card-section>
-
-        <q-card-section class="col-6 q-pt-none">
-          <label>Productos</label>
-          <q-select outlined v-model="ventaObj.productos" use-input use-chips multiple label="Selecciona un producto"
-            input-debounce="0" @new-value="createValue" :options="productosNuevos" @filter="filterFn"
-            style="width: 250px">
-            <template v-slot:no-option>
-              <q-item>
-                <q-item-section class="text-grey">
-                  No se encontraron resultados
-                </q-item-section>
-              </q-item>
-            </template>
-          </q-select>
-        </q-card-section>
-      </div> -->
-      <!-- <div class="row q-my-sm">
-        <q-card-section class="col-12 q-pt-none">
-          <label>Fecha de compra</label>
-          <q-input outlined type="date" v-model="ventaObj.fecha" label="Fecha de compra" />
-
-        </q-card-section>
-      </div> -->
 
       <div class="q-pa-md">
         <q-table v-if="ventaObj?.productos.length > 0" :rows="ventaObj?.productos" :columns="columns" row-key="name">
@@ -98,7 +59,6 @@ import { ref, reactive, computed } from 'vue'
 import { useClientesStore } from 'src/stores/clientes'
 import { useProductosStore } from 'src/stores/productos'
 import { useVentasStore } from 'src/stores/ventas'
-// import { editarRegistros } from 'src/helpers/editarRegistros'
 import { storeToRefs } from 'pinia'
 import { filtradoBusquedaObj } from 'src/helpers/filtradoBusquedaObj'
 
@@ -111,7 +71,6 @@ export default {
       clienteId: null,
       productos: [],
       total: 0,
-      // fecha: Date.now(),
       cashback: 0.0
 
     })
@@ -157,9 +116,7 @@ export default {
 
     const useVentas = useVentasStore()
     const { guardarVentas, editarVentas, obtenerVentaDia } = useVentas
-    // const { venta } = storeToRefs(useVentas)
     const useProductos = useProductosStore()
-    // const { buscarProductoCodigo } = useProductos
     const { productos, productoVenta } = storeToRefs(useProductos)
 
     const useClientes = useClientesStore()
@@ -223,28 +180,6 @@ export default {
         if (ventaNueva.total === undefined) return
         ventaObj.productos = [...ventaObj.productos, ventaNueva]
       }
-
-      // const ventaNueva = {
-      //   clienteId: null,
-      //   productos: [],
-      //   total: 0,
-      //   fecha: '',
-      //   cashback: 0.0
-      // }
-
-      // if (nuevoRegistro.value && ventaObj.productos.length > 0) {
-      //   // limpiar el estado
-      //   for (const producto of ventaObj.productos) {
-      //     producto.cantidad = 1
-      //     producto.total = producto.precio
-      //   }
-      // }
-      // if (!esNuevoRegistro) {
-      //   ventaNueva._id = null
-      // }
-      // Object.keys(venta.value || ventaObj).forEach(key => {
-      //   ventaObj[key] = editarRegistros(ventaNueva, venta.value, esNuevoRegistro)[key]
-      // })
 
       generandoNuevaVenta.value = true
       nuevoRegistro.value = abrir

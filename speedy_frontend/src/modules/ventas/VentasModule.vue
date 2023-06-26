@@ -144,6 +144,7 @@ onMounted(() => {
     if (charCode !== 13) {
       ultimoCodigoScanneado += String.fromCharCode(charCode)
     } else {
+      if (ultimoCodigoScanneado === '') return
       procesarCodigo(ultimoCodigoScanneado)
       ultimoCodigoScanneado = ''
     }
