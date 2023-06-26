@@ -81,7 +81,6 @@
       </q-card>
     </div>
     <div v-if="usuarioAutenticado?.usuario?.rol === 'socio'">
-      <h2>Mi piramide</h2>
       <q-separator color="primary" class="q-my-md" inset />
     </div>
     <div v-if="usuarioAutenticado?.usuario?.rol === 'socio'">
@@ -93,22 +92,28 @@
             <div class="text-subtitle5 text-grey">Socio principal</div>
           </q-card-section>
           <div class="q-pa-md">
-            <div class="q-gutter-md">
-              <q-card class="q-py-sm q-px-md invitado-card" v-for="(cliente, index) in usuarioAutenticado?.usuario.invitados" :key="index">
-                <q-card-section class="q-pa-md card-section">
-                  <div class="text-h4" ><strong>Nombre: </strong>{{ cliente?.cliente?.nombreCliente }}</div>
-                  <div class="text-h4" ><strong>Correo: </strong>{{ cliente?.cliente?.correo }}</div>
-                  <div class="text-h4" ><strong>Teléfono: </strong>{{ cliente?.cliente?.telefono }}</div>
-                  <div class="text-h4" ><strong>Tipo de Membresia: </strong>{{ cliente?.cliente?.tipoMembresia }}</div>
-                  <div class="text-h4" ><strong>Cantidad que han invitado: </strong>{{ cliente?.cliente?.invitados.length}}</div>
-                  <div class="text-subtitle4 text-grey">Invitado por {{ buscarCliente(cliente?.cliente?.invitadoPor) }}
-                  </div>
-                </q-card-section>
-              </q-card>
-            </div>
+              <q-table
+              grid
+              card-class="bg-primary text-white"
+              title="Mi piramide"
+              :rows="usuarioAutenticado?.usuario?.invitados"
+              :columns="columns"
+              row-key="name"
+              :filter="filter"
+              hide-header
+            >
+              <template v-slot:top-right>
+                <q-input borderless dense debounce="300" v-model="filter" placeholder="Buscar invitado">
+                  <template v-slot:append>
+                    <q-icon name="search" />
+                  </template>
+                </q-input>
+              </template>
+            </q-table>
           </div>
         </q-card>
       </q-card>
+
     </div>
   </div>
 </template>
@@ -130,8 +135,65 @@ const { usuarioAutenticado } = storeToRefs(useAutenticacion)
 const useVenta = useVentasStore()
 const { obtenerVentaDia } = useVenta
 const { ventaDia, ventasCliente } = storeToRefs(useVenta)
-
+const filter = ref('')
 const formatoMoneda = ref(new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }))
+const columns = ref([
+  {
+    name: 'nombreCliente',
+    required: true,
+    label: 'Invitados',
+    align: 'left',
+    field: row => row?.cliente?.nombreCliente,
+    format: val => `${val}`,
+    sortable: true
+  },
+  {
+    name: 'correo',
+    required: true,
+    label: 'Correo',
+    align: 'left',
+    field: row => row?.cliente?.correo,
+    format: val => `${val}`,
+    sortable: true
+  },
+  {
+    name: 'telefono',
+    required: true,
+    label: 'Telefono',
+    align: 'left',
+    field: row => row?.cliente?.telefono,
+    format: val => `${val}`,
+    sortable: true
+  },
+  {
+    name: 'tipoMembresia',
+    required: true,
+    label: 'Tipo de membresia',
+    align: 'left',
+    field: row => row?.cliente?.tipoMembresia,
+    format: val => `${val}`,
+    sortable: true
+  },
+  {
+    name: 'invitados',
+    required: true,
+    label: 'Cantidad que han invitado',
+    align: 'left',
+    field: row => row?.cliente?.invitados?.length,
+    format: val => `${val}`,
+    sortable: true
+  },
+  {
+    name: 'invitadoPor',
+    required: true,
+    label: 'Invitado por',
+    align: 'left',
+    field: row => buscarCliente(row?.cliente?.invitadoPor),
+    format: val => `${val}`,
+    sortable: true
+  }
+
+])
 
 const buscarCliente = (id) => {
   const cliente = clientes.value.find(cliente => cliente._id === id)
