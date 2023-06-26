@@ -9,7 +9,7 @@ const generateAndDownloadBarcodeInPDF = (cliente) => {
       unit: 'mm',
       format: [85, 54]
     })
-    doc.addImage('src/assets/speedy.png', 'PNG', 0, 0, doc.internal.pageSize.getWidth(), doc.internal.pageSize.getHeight())
+    doc.addImage('dist/spa/assets/speedy.3883bbfb.png', 'PNG', 0, 0, doc.internal.pageSize.getWidth(), doc.internal.pageSize.getHeight())
 
     doc.addPage()
     // Texto a centrar

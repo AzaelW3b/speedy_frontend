@@ -59,8 +59,6 @@ import { storeToRefs } from 'pinia'
 import { useClientesStore } from 'src/stores/clientes'
 import ModalClientes from '../../components/clientes/ModalClientes.vue'
 import { generateAndDownloadBarcodeInPDF } from 'src/helpers/codigoBarras'
-// import jsbarcode from 'jsbarcode'
-// import { createCanvas } from 'canvas'
 
 const useClientes = useClientesStore()
 const { obtenerClienteId, eliminarClientes } = useClientes
