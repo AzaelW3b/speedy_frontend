@@ -8,6 +8,7 @@ export const useVentasStore = defineStore('ventas', () => {
   const venta = ref(null)
   const ventaDia = ref(null)
   const ventasCliente = ref(null)
+  const ventasClienteId = ref([])
   // guardar productos
   const guardarVentas = async (venta) => {
     try {
@@ -71,7 +72,10 @@ export const useVentasStore = defineStore('ventas', () => {
 
     return cliente?.nombreCliente
   }
-
+  const obtenerVentasClienteId = async (id) => {
+    const { data } = await api.get(`/ventas/ventasClienteId/${id}`)
+    ventasClienteId.value = data
+  }
   const obtenerVentaDia = async () => {
     try {
       const { data } = await api.get('/ventas/ventasDia')
@@ -86,6 +90,7 @@ export const useVentasStore = defineStore('ventas', () => {
     ventas,
     venta,
     ventasCliente,
+    ventasClienteId,
     // metodos
     guardarVentas,
     editarVentas,
@@ -95,6 +100,7 @@ export const useVentasStore = defineStore('ventas', () => {
     obtenerClienteVenta,
     obtenerVentaDia,
     ventaDia,
-    obtenerVentasCliente
+    obtenerVentasCliente,
+    obtenerVentasClienteId
   }
 })
