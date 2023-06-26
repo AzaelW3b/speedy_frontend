@@ -39,13 +39,6 @@
             </q-select>
           </q-card-section>
         </div>
-        <div class="row q-my-sm">
-          <q-card-section class="col-12 q-pt-none">
-            <label>Fecha de compra</label>
-            <q-input outlined type="date" v-model="ventaObj.fecha" label="Fecha de compra" />
-
-          </q-card-section>
-        </div>
 
         <div class="q-pa-md">
           <q-table v-if="ventaObj?.productos.length > 0" :rows="ventaObj?.productos" :columns="columns" row-key="name">
@@ -90,7 +83,6 @@ export default {
       clienteId: null,
       productos: [],
       total: 0,
-      fecha: '',
       cashback: 0.0
 
     })
