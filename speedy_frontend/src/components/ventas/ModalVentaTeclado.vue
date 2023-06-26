@@ -1,5 +1,5 @@
 <template>
-    <q-dialog persistent v-model="modalVentas">
+    <q-dialog v-model="modalVentas">
       <q-card class="full-width">
         <q-card-section class="bg-primary text-white">
           <q-btn icon="close" flat round dense v-close-popup />
@@ -8,26 +8,8 @@
             <q-separator />
           </div>
         </q-card-section>
-        <q-card flat bordered class="my-card" v-if="cliente">
 
-        <q-card-section class="q-pt-md text-h4">
-         <b>Socio: </b>{{ cliente?.nombreCliente }}
-        </q-card-section>
-
-        <q-separator inset />
-
-        <q-card-section class="text-h4">
-          <b>Tipo de membresia: </b>{{`${cliente?.tipoMembresia}` }}
-        </q-card-section>
-      </q-card>
-      <q-card flat bordered class="my-card" v-else>
-        <q-card-section>
-          <div class="text-h4 text-center"> Captura o vuelve capturar la membresia del Socio </div>
-        </q-card-section>
-      </q-card>
-        <!-- {{ cliente.nombreCliente }} -->
-
-        <!-- <div class="row q-my-sm">
+        <div class="row q-my-sm">
           <q-card-section class="col-6 q-pt-none">
             <label>Cliente</label>
             <q-select outlined v-model="ventaObj.clienteId" use-input input-debounce="0" label="Selecciona el cliente"
@@ -56,14 +38,14 @@
               </template>
             </q-select>
           </q-card-section>
-        </div> -->
-        <!-- <div class="row q-my-sm">
+        </div>
+        <div class="row q-my-sm">
           <q-card-section class="col-12 q-pt-none">
             <label>Fecha de compra</label>
             <q-input outlined type="date" v-model="ventaObj.fecha" label="Fecha de compra" />
 
           </q-card-section>
-        </div> -->
+        </div>
 
         <div class="q-pa-md">
           <q-table v-if="ventaObj?.productos.length > 0" :rows="ventaObj?.productos" :columns="columns" row-key="name">
@@ -87,7 +69,6 @@
         </div>
         <q-card-actions align="right">
           <q-btn label="Guardar venta" @click="guardarVenta" color="primary" v-close-popup />
-          <q-btn label="Cancelar Venta" @click="limpiarEstadoProductos"  v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -98,20 +79,18 @@ import { ref, reactive, computed } from 'vue'
 import { useClientesStore } from 'src/stores/clientes'
 import { useProductosStore } from 'src/stores/productos'
 import { useVentasStore } from 'src/stores/ventas'
-// import { editarRegistros } from 'src/helpers/editarRegistros'
+import { editarRegistros } from 'src/helpers/editarRegistros'
 import { storeToRefs } from 'pinia'
 import { filtradoBusquedaObj } from 'src/helpers/filtradoBusquedaObj'
 
 export default {
   setup () {
     const modalVentas = ref(false)
-    const generandoNuevaVenta = ref(false)
-    const cliente = ref(null)
     const ventaObj = reactive({
       clienteId: null,
       productos: [],
       total: 0,
-      // fecha: Date.now(),
+      fecha: '',
       cashback: 0.0
 
     })
@@ -119,9 +98,9 @@ export default {
 
     const columns = [
       {
-        name: 'nombreProducto',
+        name: 'label',
         label: 'Producto',
-        field: 'nombreProducto',
+        field: 'label',
         align: 'left',
         sortable: true
       },
@@ -156,11 +135,11 @@ export default {
     ]
 
     const useVentas = useVentasStore()
-    const { guardarVentas, editarVentas, obtenerVentaDia } = useVentas
-    // const { venta } = storeToRefs(useVentas)
+    const { guardarVentas, editarVentas } = useVentas
+    const { venta } = storeToRefs(useVentas)
     const useProductos = useProductosStore()
-    // const { buscarProductoCodigo } = useProductos
-    const { productos, productoVenta } = storeToRefs(useProductos)
+    // const { guardarProductos } = useProductos
+    const { productos } = storeToRefs(useProductos)
 
     const useClientes = useClientesStore()
     const { clientes } = storeToRefs(useClientes)
@@ -186,68 +165,33 @@ export default {
         }
       })
     )
-
     const clientesNuevos = ref(clientesOpciones.value)
     const productosNuevos = ref(productosOpciones.value)
-
-    const abrir = (informacion) => {
-      modalVentas.value = true
-      const { abrir, codigo } = informacion
-
-      let clienteEncontrado = null
-      let productoEncontrado = null
-      // evaluación si es un código de barras de la membresia
-      if (codigo.includes('S')) {
-        clienteEncontrado = clientes.value.find(cliente => cliente.folio === codigo)
-      } else {
-        productoEncontrado = productos.value.find(producto => producto.codigoBarras === codigo)
-      }
-      cliente.value = clienteEncontrado
+    const abrir = (esNuevoRegistro) => {
       const ventaNueva = {
-        ...productoEncontrado,
-        cantidad: 1,
-        total: productoEncontrado?.precio
+        clienteId: null,
+        productos: [],
+        total: 0,
+        fecha: '',
+        cashback: 0.0
       }
 
-      const productoExiste = ventaObj?.productos?.findIndex(producto => producto.codigoBarras === ventaNueva.codigoBarras)
-
-      if (productoExiste !== -1) {
-        for (const venta of ventaObj?.productos) {
-          if (venta.codigoBarras === ventaNueva.codigoBarras) {
-            const precioBase = parseFloat(venta.precio)
-            venta.cantidad++
-            venta.total = precioBase * venta.cantidad
-          }
+      if (nuevoRegistro.value && ventaObj.productos.length > 0) {
+        // limpiar el estado
+        for (const producto of ventaObj.productos) {
+          producto.cantidad = 1
+          producto.total = producto.precio
         }
-      } else {
-        if (ventaNueva.total === undefined) return
-        ventaObj.productos = [...ventaObj.productos, ventaNueva]
       }
+      if (!esNuevoRegistro) {
+        ventaNueva._id = null
+      }
+      Object.keys(venta.value || ventaObj).forEach(key => {
+        ventaObj[key] = editarRegistros(ventaNueva, venta.value, esNuevoRegistro)[key]
+      })
 
-      // const ventaNueva = {
-      //   clienteId: null,
-      //   productos: [],
-      //   total: 0,
-      //   fecha: '',
-      //   cashback: 0.0
-      // }
-
-      // if (nuevoRegistro.value && ventaObj.productos.length > 0) {
-      //   // limpiar el estado
-      //   for (const producto of ventaObj.productos) {
-      //     producto.cantidad = 1
-      //     producto.total = producto.precio
-      //   }
-      // }
-      // if (!esNuevoRegistro) {
-      //   ventaNueva._id = null
-      // }
-      // Object.keys(venta.value || ventaObj).forEach(key => {
-      //   ventaObj[key] = editarRegistros(ventaNueva, venta.value, esNuevoRegistro)[key]
-      // })
-
-      generandoNuevaVenta.value = true
-      nuevoRegistro.value = abrir
+      modalVentas.value = true
+      nuevoRegistro.value = esNuevoRegistro
     }
     const parametrosFiltradosClientes = (val, update) => {
       filtradoBusquedaObj(val, update, clientesOpciones.value, clientesNuevos)
@@ -256,17 +200,11 @@ export default {
       ventaObj.cashback = ventaObj.total * 0.05
       if (nuevoRegistro.value) {
         const ventaNueva = { ...ventaObj }
-        ventaNueva.clienteId = cliente.value._id
+        ventaNueva.clienteId = ventaNueva?.clienteId?.value
         guardarVentas(ventaNueva)
-        generandoNuevaVenta.value = false
-        limpiarEstadoProductos()
       } else {
         editarVentas(ventaObj)
       }
-      obtenerVentaDia()
-    }
-    const limpiarEstadoProductos = () => {
-      ventaObj.productos = []
     }
     const createValue = (val, done) => {
       if (val.length > 2) {
@@ -312,9 +250,6 @@ export default {
       clientesNuevos,
       productosNuevos,
       columns,
-      productoVenta,
-      limpiarEstadoProductos,
-      cliente,
       // metodos
       abrir,
       guardarVenta,
@@ -323,7 +258,6 @@ export default {
       filterFn,
       sumarTotal,
       aumentarCantidadProducto,
-      obtenerVentaDia,
       disminuirCantidadProducto
 
     }

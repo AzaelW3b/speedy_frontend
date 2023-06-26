@@ -67,6 +67,7 @@
       </q-table>
       <ModalVentas ref="modalVentas"/>
       <ModalVentaCliente ref="modalVerVentaCliente"/>
+      <ModalVentaTeclado ref="modalVentaTeclado"/>
     </div>
   </q-layout>
 </template>
@@ -80,6 +81,7 @@ import { useAutenticacionStore } from 'src/stores/autenticaciones'
 import { formatearFecha } from '../../helpers/formatearFecha'
 import ModalVentas from 'src/components/ventas/ModalVentas.vue'
 import ModalVentaCliente from 'src/components/ventas/ModalVentaCliente.vue'
+import ModalVentaTeclado from 'src/components/ventas/ModalVentaTeclado.vue'
 
 const useVenta = useVentasStore()
 const { eliminarVentas, obtenerClienteVenta, obtenerVentasId } = useVenta
@@ -149,6 +151,7 @@ onMounted(() => {
 })
 const modalVentas = ref(null)
 const modalVerVentaCliente = ref(null)
+const modalVentaTeclado = ref(null)
 const buscar = ref('')
 const notificacion = useQuasar()
 
@@ -159,10 +162,10 @@ function procesarCodigo (codigo) {
 }
 const verCompraCliente = (venta) => {
   obtenerVentasId(venta._id)
-  modalVentas.value.abrir()
+  modalVerVentaCliente.value.abrir()
 }
 const nuevaVenta = () => {
-  modalVerVentaCliente.value.abrir()
+  modalVentaTeclado.value.abrir(true)
 }
 const ventasTotales = () => {
   const total = ventas?.value?.reduce((suma, venta) => venta.total + suma, 0)

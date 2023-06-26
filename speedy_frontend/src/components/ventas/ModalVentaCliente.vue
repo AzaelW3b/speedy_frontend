@@ -19,7 +19,7 @@
               <th>Total de compra</th>
             </tr>
             <tr class="venta-datos" v-for="venta in venta.productos" :key="venta.codigoBarras">
-              <td>{{ venta.nombreProducto }}</td>
+              <td>{{ venta.nombreProducto || venta.label }}</td>
               <td>{{ venta.cantidad }}</td>
               <td>{{ formatoMoneda.format(venta.precio) }}</td>
               <td>{{ formatoMoneda.format(venta.total) }}</td>
