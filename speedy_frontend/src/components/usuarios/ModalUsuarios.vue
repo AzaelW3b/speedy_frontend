@@ -11,7 +11,7 @@
          </div>
        </q-card-section>
 
-       <div class="row q-my-sm" >
+       <div class="row q-my-sm">
         <q-card-section class="col-6 q-pt-none">
           <label>Nombre completo</label>
           <q-input

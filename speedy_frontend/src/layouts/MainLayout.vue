@@ -44,6 +44,7 @@ import { useClientesStore } from 'src/stores/clientes'
 import { useCategoriasStore } from 'src/stores/categorias'
 import { useProductosStore } from 'src/stores/productos'
 import { useVentasStore } from 'src/stores/ventas'
+import { useInventariosStore } from 'src/stores/inventario'
 
 const leftDrawerOpen = ref(false)
 const router = useRouter()
@@ -67,6 +68,9 @@ const { obtenerProductos } = useProducto
 const useVenta = useVentasStore()
 const { obtenerVentas, obtenerVentasCliente } = useVenta
 
+const useInventario = useInventariosStore()
+const { obtenerInventarios } = useInventario
+
 const logout = () => {
   router.push('/')
   cerrarSesion()
@@ -79,6 +83,7 @@ onMounted(async () => {
   obtenerProductos()
   obtenerVentas()
   obtenerVentasCliente(usuarioAutenticado?.value?.usuario?._id)
+  obtenerInventarios()
 })
 const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value

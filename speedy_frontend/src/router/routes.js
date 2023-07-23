@@ -9,6 +9,8 @@ function checarRole (to, from, next, rol) {
     console.log(usuarioAutenticado?.value?.usuario?.rol === rol)
     next()
   } else {
+    // console.log('toooo', to)
+    // console.log('froooom', from)
     next({ name: 'dashboard' })
   }
 }
@@ -81,6 +83,18 @@ const routes = [
         meta: { roles: ['socio'] },
         // usuario que si puede ver
         component: () => import('src/modules/productos/ProductosModule.vue'),
+        beforeEnter: (to, from, next) => checarRole(to, from, next, ['admin', 'cajero'])
+
+      },
+      {
+        path: 'inventario',
+        icono: 'storefront',
+        label: 'Control de inventario',
+        name: 'inventario',
+        // se ponen los roles que no debe ver cierto usuario
+        meta: { roles: ['socio'] },
+        // usuario que si puede ver
+        component: () => import('src/modules/inventario/InventarioModule.vue'),
         beforeEnter: (to, from, next) => checarRole(to, from, next, ['admin', 'cajero'])
 
       },
