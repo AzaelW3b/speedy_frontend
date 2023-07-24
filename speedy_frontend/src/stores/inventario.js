@@ -6,7 +6,8 @@ import { useProductosStore } from './productos'
 export const useInventariosStore = defineStore('inventarios', () => {
   const inventarios = ref([])
   const inventario = ref(null)
-  const productoEncontrado = ref(null)
+  const nuevoRegistro = ref(false)
+  const busquedaCodigoBarras = ref('')
 
   const useProducto = useProductosStore()
   const { productos } = storeToRefs(useProducto)
@@ -29,10 +30,13 @@ export const useInventariosStore = defineStore('inventarios', () => {
     }
   }
   const buscarProductoCodigo = (codigoBarras) => {
-    productoEncontrado.value = productos.value.find(producto => producto.codigoBarras === codigoBarras)
+    inventario.value = productos.value.find(producto => producto.codigoBarras === codigoBarras)
+    nuevoRegistro.value = true
   }
   const buscarInventario = (codigoBarras) => {
     inventario.value = inventarios.value.find(inventario => inventario.codigoBarras === codigoBarras)
+    nuevoRegistro.value = false
+    busquedaCodigoBarras.value = inventario.value.codigoBarras
     console.log(inventario.value)
   }
   const editarInventario = async (inventario) => {
@@ -50,7 +54,8 @@ export const useInventariosStore = defineStore('inventarios', () => {
     // states
     inventarios,
     inventario,
-    productoEncontrado,
+    nuevoRegistro,
+    busquedaCodigoBarras,
     // metodos
     guardarInventarios,
     buscarProductoCodigo,

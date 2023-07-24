@@ -3,8 +3,9 @@
         <q-input
             label="Buscar producto por codigo de barras"
             outlined
-            :clearable="limpiarCodigo"
-            v-model="codigoBarras"
+            :clearable="true"
+            @clear="limpiarEstado"
+            v-model="busquedaCodigoBarras"
             >
             <template v-slot:prepend>
                 <q-icon name="search" />
@@ -14,70 +15,57 @@
     <form
         @submit.prevent="guardarInventario"
         class="q-pa-md shadow-1"
-        v-if="productoEncontrado || inventario"
+        v-if="busquedaCodigoBarras !== ''"
         >
-        <h2>{{ inventario ? 'Actualizar Inventario' : 'Agregar Nuevo Inventario' }}</h2>
-            <div class="q-my-sm" v-if="productoEncontrado">
-                <label>Código de barras</label>
-                <q-input
-                    v-model="productoEncontrado.codigoBarras"
-                    label="Ingresa el codigo de barras"
-                    outlined
-                />
-            </div>
-            <div class=" q-my-sm" v-if="productoEncontrado">
-                <label>Producto</label>
-                <q-input
-                    v-model="productoEncontrado.nombreProducto"
-                    label="Ingresa el nombre de producto"
-                    outlined
-                />
-            </div>
-            <div class=" q-my-sm" v-if="productoEncontrado">
-                <label>Cantidad</label>
-                <q-input
-                    v-model="cantidad"
-                    type="number"
-                    label="Ingresa el codigo de barras"
-                    outlined
-                />
-            </div>
+      <div v-if="inventario">
+        <h2>{{ nuevoRegistro ? 'Agregar Nuevo Inventario' : 'Actualizar Inventario' }}</h2>
 
-            <div class="q-my-sm" v-if="inventario">
-                <label>Código de barras</label>
-                <q-input
-                    v-model="inventario.codigoBarras"
-                    label="Ingresa el codigo de barras"
-                    outlined
-                />
-            </div>
-            <div class=" q-my-sm" v-if="inventario">
-                <label>Producto</label>
-                <q-input
-                    v-model="inventario.nombreProducto"
-                    label="Ingresa el nombre de producto"
-                    outlined
-                />
-            </div>
-            <div class=" q-my-sm" v-if="inventario">
-                <label>Cantidad</label>
-                <q-input
-                    v-model="inventario.cantidad"
-                    type="number"
-                    label="Ingresa el codigo de barras"
-                    outlined
-                />
-            </div>
+        <div class="q-my-sm">
+            <label>Código de barras</label>
+            <q-input
+                v-model="inventario.codigoBarras"
+                :label= "nuevoRegistro ?  'Ingresa el codigo de barras'  : 'Edita el codigo de barras'"
+                outlined
+            />
+        </div>
+        <div class=" q-my-sm">
+            <label>Producto</label>
+            <q-input
+                v-model="inventario.nombreProducto"
+                :label= "nuevoRegistro ? 'Ingresa el producto'  : 'Edita el producto'"
+                outlined
+            />
+        </div>
+        <div class=" q-my-sm" v-if="nuevoRegistro">
+            <label>Cantidad</label>
+            <q-input
+                v-model="cantidad"
+                type="number"
+                :label= "nuevoRegistro ? 'Ingresa la cantidad del inventario': 'Edita la cantidad del inventario'"
+                outlined
+            />
+        </div>
 
-            <div class="q-my-md">
-                <q-btn
-                    :label= "inventario ? 'Editar Inventario' : 'Guardar inventario'"
-                    type="submit"
-                    color="primary"
-                />
-            </div>
+        <div class=" q-my-sm" v-else>
+            <label>Cantidad</label>
+            <q-input
+                v-model="inventario.cantidad"
+                type="number"
+                :label= "nuevoRegistro ? 'Ingresa la cantidad del inventario': 'Edita la cantidad del inventario'"
+                outlined
+            />
+        </div>
+
+        <div class="q-my-md">
+            <q-btn
+                :label= "nuevoRegistro ? 'Guardar inventario' : 'Editar Inventario'"
+                type="submit"
+                color="primary"
+            />
+        </div>
+      </div>
     </form>
-    <div v-if="inventario === null && productoEncontrado === null">
+    <div v-if="busquedaCodigoBarras === '' ">
         <q-card class="my-card">
             <q-card-section>
                 <h4>Debes escanear el código de barras para encontrar un producto y agregarlo al inventario.</h4>
@@ -93,12 +81,11 @@ import { useInventariosStore } from 'src/stores/inventario'
 import { storeToRefs } from 'pinia'
 
 const useInventario = useInventariosStore()
-const { buscarProductoCodigo, guardarInventarios } = useInventario
-const { productoEncontrado, inventario } = storeToRefs(useInventario)
+const { buscarProductoCodigo, guardarInventarios, editarInventario } = useInventario
+const { inventario, nuevoRegistro, busquedaCodigoBarras } = storeToRefs(useInventario)
 
 const cantidad = ref(0)
-const codigoBarras = ref('')
-const limpiarCodigo = ref(true)
+
 onMounted(() => {
   let ultimoCodigoScanneado = ''
 
@@ -115,23 +102,24 @@ onMounted(() => {
 })
 function procesarCodigo (codigo) {
   if (codigo === '') return
-  buscarProductoCodigo(codigoBarras.value)
+  buscarProductoCodigo(busquedaCodigoBarras.value)
 }
 
 const guardarInventario = () => {
   const nuevoInventario = {
-    ...productoEncontrado.value,
-    cantidad: parseInt(cantidad.value)
+    ...inventario.value,
+    cantidad: parseInt(cantidad.value) || inventario?.value?.cantidad
   }
-  // nuevo registro
-  if (productoEncontrado) {
+  if (nuevoRegistro.value) {
+    console.log(nuevoRegistro.value)
     guardarInventarios(nuevoInventario)
-    return
+    limpiarEstado()
+  } else {
+    editarInventario(nuevoInventario)
+    limpiarEstado()
   }
-  // editando el registro
-  if (inventario) {
-    guardarInventario()
-  }
-//   guardarInventarios(nuevoInventario)
+}
+const limpiarEstado = () => {
+  busquedaCodigoBarras.value = ''
 }
 </script>
