@@ -96,14 +96,14 @@ const inventarioEditarId = (inventario) => {
   buscarInventario(inventario.codigoBarras)
 }
 
-const confirmarEliminarProducto = (producto) => {
+const confirmarEliminarProducto = (inventario) => {
   notificacion.dialog({
-    title: `¿Deseas eliminar el producto ${producto.nombreProducto}?`,
+    title: `¿Deseas eliminar el producto ${inventario.nombreProducto}?`,
     message: 'Una vez le des en "ok" no se podrá recuperar el producto',
     cancel: true,
     persistent: true
   }).onOk(() => {
-    eliminarInventario(producto._id)
+    eliminarInventario(inventario._id)
   }).onCancel(() => {
     console.log('cancelando.....')
   })

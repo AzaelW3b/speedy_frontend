@@ -72,6 +72,7 @@ import { ref, reactive, computed } from 'vue'
 import { useClientesStore } from 'src/stores/clientes'
 import { useProductosStore } from 'src/stores/productos'
 import { useVentasStore } from 'src/stores/ventas'
+import { useInventariosStore } from 'src/stores/inventario'
 import { editarRegistros } from 'src/helpers/editarRegistros'
 import { storeToRefs } from 'pinia'
 import { filtradoBusquedaObj } from 'src/helpers/filtradoBusquedaObj'
@@ -135,6 +136,9 @@ export default {
 
     const useClientes = useClientesStore()
     const { clientes } = storeToRefs(useClientes)
+    const useInventario = useInventariosStore()
+    const { actualizarCantidadInventario } = useInventario
+    // const { inventarios } = storeToRefs(useInventario)
 
     const clientesOpciones = computed(() => {
       return clientes.value.map(cliente => {
@@ -153,7 +157,8 @@ export default {
           children: producto.nombreProducto,
           precio: producto.precio,
           cantidad: 1,
-          total: producto.precio
+          total: producto.precio,
+          codigoBarras: producto.codigoBarras
         }
       })
     )
@@ -194,6 +199,7 @@ export default {
         const ventaNueva = { ...ventaObj }
         ventaNueva.clienteId = ventaNueva?.clienteId?.value
         guardarVentas(ventaNueva)
+        actualizarCantidadInventario(ventaNueva)
       } else {
         editarVentas(ventaObj)
       }

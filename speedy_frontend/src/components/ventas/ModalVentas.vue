@@ -59,6 +59,7 @@ import { ref, reactive, computed } from 'vue'
 import { useClientesStore } from 'src/stores/clientes'
 import { useProductosStore } from 'src/stores/productos'
 import { useVentasStore } from 'src/stores/ventas'
+import { useInventariosStore } from 'src/stores/inventario'
 import { storeToRefs } from 'pinia'
 import { filtradoBusquedaObj } from 'src/helpers/filtradoBusquedaObj'
 
@@ -67,6 +68,7 @@ export default {
     const modalVentas = ref(false)
     const generandoNuevaVenta = ref(false)
     const cliente = ref(null)
+    const informacionInventario = ref(null)
     const ventaObj = reactive({
       clienteId: null,
       productos: [],
@@ -121,6 +123,10 @@ export default {
 
     const useClientes = useClientesStore()
     const { clientes } = storeToRefs(useClientes)
+
+    const useInventario = useInventariosStore()
+    const { actualizarCantidadInventario } = useInventario
+    const { inventarios } = storeToRefs(useInventario)
 
     const clientesOpciones = computed(() => {
       return clientes.value.map(cliente => {
@@ -183,6 +189,8 @@ export default {
 
       generandoNuevaVenta.value = true
       nuevoRegistro.value = abrir
+      informacionInventario.value = inventarios.value.find(inventario => inventario.codigoBarras === ventaNueva.codigoBarras)
+      console.log(informacionInventario)
     }
     const parametrosFiltradosClientes = (val, update) => {
       filtradoBusquedaObj(val, update, clientesOpciones.value, clientesNuevos)
@@ -193,6 +201,7 @@ export default {
         const ventaNueva = { ...ventaObj }
         ventaNueva.clienteId = cliente.value._id
         guardarVentas(ventaNueva)
+        actualizarCantidadInventario(ventaNueva)
         generandoNuevaVenta.value = false
         limpiarEstadoProductos()
       } else {

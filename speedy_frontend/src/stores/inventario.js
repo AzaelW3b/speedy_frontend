@@ -58,6 +58,18 @@ export const useInventariosStore = defineStore('inventarios', () => {
       console.log(error.response.data.msg)
     }
   }
+  const actualizarCantidadInventario = async (inventario) => {
+    try {
+      for (const inventarioCodigoBarras of inventario.productos) {
+        const inventarioOriginal = inventarios.value.find(inventarioIndex => inventarioIndex.codigoBarras === inventarioCodigoBarras.codigoBarras)
+        const restaInventario = inventarioOriginal.cantidad - inventarioCodigoBarras.cantidad
+        inventarioOriginal.cantidad = restaInventario
+        await api.put(`/inventario/${inventarioOriginal.codigoBarras}`, inventarioOriginal)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
   return {
     // states
     inventarios,
@@ -70,6 +82,7 @@ export const useInventariosStore = defineStore('inventarios', () => {
     obtenerInventarios,
     buscarInventario,
     editarInventario,
-    eliminarInventario
+    eliminarInventario,
+    actualizarCantidadInventario
   }
 })
