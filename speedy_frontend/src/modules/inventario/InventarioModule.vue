@@ -55,7 +55,7 @@ import { storeToRefs } from 'pinia'
 import { useInventariosStore } from 'src/stores/inventario'
 import FormularioInventario from 'src/components/inventario/FormularioInventario.vue'
 const useInventario = useInventariosStore()
-const { buscarInventario } = useInventario
+const { buscarInventario, eliminarInventario } = useInventario
 const { inventarios } = storeToRefs(useInventario)
 
 const columns = [
@@ -94,7 +94,6 @@ const notificacion = useQuasar()
 
 const inventarioEditarId = (inventario) => {
   buscarInventario(inventario.codigoBarras)
-  // obtenerProductosId(id)
 }
 
 const confirmarEliminarProducto = (producto) => {
@@ -104,7 +103,7 @@ const confirmarEliminarProducto = (producto) => {
     cancel: true,
     persistent: true
   }).onOk(() => {
-    // eliminarProductos(producto._id)
+    eliminarInventario(producto._id)
   }).onCancel(() => {
     console.log('cancelando.....')
   })

@@ -49,7 +49,15 @@ export const useInventariosStore = defineStore('inventarios', () => {
       console.log(error.response.data.msg)
     }
   }
-
+  const eliminarInventario = async (id) => {
+    try {
+      const { data } = await api.delete(`/inventario/${id}`)
+      inventarios.value = inventarios.value.filter(inventario => inventario._id !== id)
+      console.log(data)
+    } catch (error) {
+      console.log(error.response.data.msg)
+    }
+  }
   return {
     // states
     inventarios,
@@ -61,6 +69,7 @@ export const useInventariosStore = defineStore('inventarios', () => {
     buscarProductoCodigo,
     obtenerInventarios,
     buscarInventario,
-    editarInventario
+    editarInventario,
+    eliminarInventario
   }
 })
