@@ -62,7 +62,7 @@ import { useVentasStore } from 'src/stores/ventas'
 import { useInventariosStore } from 'src/stores/inventario'
 import { storeToRefs } from 'pinia'
 import { filtradoBusquedaObj } from 'src/helpers/filtradoBusquedaObj'
-
+import { generarTicket } from 'src/helpers/ticket'
 export default {
   setup () {
     const modalVentas = ref(false)
@@ -197,6 +197,7 @@ export default {
         const ventaNueva = { ...ventaObj }
         ventaNueva.clienteId = cliente.value._id
         guardarVentas(ventaNueva)
+        generarTicket(ventaNueva)
         actualizarCantidadInventario(ventaNueva)
         generandoNuevaVenta.value = false
         limpiarEstadoProductos()
