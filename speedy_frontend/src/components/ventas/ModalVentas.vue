@@ -68,7 +68,6 @@ export default {
     const modalVentas = ref(false)
     const generandoNuevaVenta = ref(false)
     const cliente = ref(null)
-    const informacionInventario = ref(null)
     const ventaObj = reactive({
       clienteId: null,
       productos: [],
@@ -126,7 +125,6 @@ export default {
 
     const useInventario = useInventariosStore()
     const { actualizarCantidadInventario } = useInventario
-    const { inventarios } = storeToRefs(useInventario)
 
     const clientesOpciones = computed(() => {
       return clientes.value.map(cliente => {
@@ -189,8 +187,6 @@ export default {
 
       generandoNuevaVenta.value = true
       nuevoRegistro.value = abrir
-      informacionInventario.value = inventarios.value.find(inventario => inventario.codigoBarras === ventaNueva.codigoBarras)
-      console.log(informacionInventario)
     }
     const parametrosFiltradosClientes = (val, update) => {
       filtradoBusquedaObj(val, update, clientesOpciones.value, clientesNuevos)
