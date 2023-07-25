@@ -12,8 +12,18 @@
               color="primary"
               :rows="inventarios"
               :columns="columns"
-              :filter="buscar"
-            >
+              :filter="buscar">
+              <template  v-slot:top>
+                  <div class="fit row q-gutter-sm">
+                    <div class="col-6">
+                      <q-input outlined dense debounce="300" clearable v-model="buscar" placeholder="Buscar en inventario">
+                        <template v-slot:append>
+                          <q-icon name="search" />
+                        </template>
+                      </q-input>
+                    </div>
+                  </div>
+                </template>
               <template v-slot:body-cell-acciones="props">
                 <q-td>
                   <q-btn
@@ -57,7 +67,6 @@ import FormularioInventario from 'src/components/inventario/FormularioInventario
 const useInventario = useInventariosStore()
 const { buscarInventario, eliminarInventario } = useInventario
 const { inventarios } = storeToRefs(useInventario)
-
 const columns = [
   {
     name: 'codigoBarras',
