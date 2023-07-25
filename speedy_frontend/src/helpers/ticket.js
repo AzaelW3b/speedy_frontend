@@ -28,7 +28,8 @@ export const generarTicket = (venta) => {
     doc.setFontSize(10)
     let yPos = imgHeight + 30 // Ajusta la posición vertical para los productos
     for (let i = 0; i < venta.productos.length; i++) {
-      doc.text(`Producto: ${venta.productos[i].label}`, 10, yPos)
+      console.log(venta.productos[i])
+      doc.text(`Producto: ${venta.productos[i]?.label || venta.productos[i]?.nombreProducto}`, 10, yPos)
       doc.text('   ' + `Precio: ${venta.productos[i].precio.toString()}`, 40, yPos)
       yPos += 5 // Ajusta el espaciado vertical entre productos
     }
