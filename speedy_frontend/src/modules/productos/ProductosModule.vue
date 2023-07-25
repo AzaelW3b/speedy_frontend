@@ -19,6 +19,17 @@
         :filter="buscar"
 
       >
+      <template  v-slot:top>
+            <div class="fit row q-gutter-sm justify-end">
+              <div class="col-4">
+                <q-input outlined dense debounce="300" clearable v-model="buscar" placeholder="Buscar producto">
+                  <template v-slot:append>
+                    <q-icon name="search" />
+                  </template>
+                </q-input>
+              </div>
+            </div>
+          </template>
       <template v-slot:body-cell-acciones="props">
           <q-td>
             <q-btn

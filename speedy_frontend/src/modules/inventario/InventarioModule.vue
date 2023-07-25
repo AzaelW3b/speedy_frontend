@@ -14,7 +14,7 @@
               :columns="columns"
               :filter="buscar">
               <template  v-slot:top>
-                  <div class="fit row q-gutter-sm">
+                  <div class="fit row q-gutter-sm justify-end">
                     <div class="col-6">
                       <q-input outlined dense debounce="300" clearable v-model="buscar" placeholder="Buscar en inventario">
                         <template v-slot:append>
