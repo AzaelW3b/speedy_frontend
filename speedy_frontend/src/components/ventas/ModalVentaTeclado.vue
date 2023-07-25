@@ -76,6 +76,7 @@ import { useInventariosStore } from 'src/stores/inventario'
 import { editarRegistros } from 'src/helpers/editarRegistros'
 import { storeToRefs } from 'pinia'
 import { filtradoBusquedaObj } from 'src/helpers/filtradoBusquedaObj'
+import { generarTicket } from 'src/helpers/ticket'
 
 export default {
   setup () {
@@ -200,6 +201,7 @@ export default {
         ventaNueva.clienteId = ventaNueva?.clienteId?.value
         guardarVentas(ventaNueva)
         actualizarCantidadInventario(ventaNueva)
+        generarTicket(ventaNueva)
       } else {
         editarVentas(ventaObj)
       }
