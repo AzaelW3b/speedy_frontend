@@ -141,6 +141,8 @@ export default {
         productoNuevo.categoria = productoNuevo.categoria.value
         guardarProductos(productoNuevo)
       } else {
+        const categoria = productoObj.categoria.value
+        productoObj.categoria = categoria
         editarProductos(productoObj)
       }
     }

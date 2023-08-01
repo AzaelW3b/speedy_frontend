@@ -28,6 +28,7 @@ export const useProductosStore = defineStore('productos', () => {
   // editar productos
   const editarProductos = async (producto) => {
     try {
+      console.log(producto)
       const { data } = await api.put(`/productos/${producto._id}`, producto)
       const productoOriginal = productos.value.find(productoIndex => productoIndex._id === producto._id)
       Object.assign(productoOriginal, producto)
