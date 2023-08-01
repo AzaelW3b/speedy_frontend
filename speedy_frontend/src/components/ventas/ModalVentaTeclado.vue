@@ -70,7 +70,7 @@
 <script>
 import { ref, reactive, computed } from 'vue'
 import { useClientesStore } from 'src/stores/clientes'
-import { useProductosStore } from 'src/stores/productos'
+// import { useProductosStore } from 'src/stores/productos'
 import { useVentasStore } from 'src/stores/ventas'
 import { useInventariosStore } from 'src/stores/inventario'
 import { editarRegistros } from 'src/helpers/editarRegistros'
@@ -131,15 +131,15 @@ export default {
     const useVentas = useVentasStore()
     const { guardarVentas, editarVentas } = useVentas
     const { venta } = storeToRefs(useVentas)
-    const useProductos = useProductosStore()
+    // const useProductos = useProductosStore()
     // const { guardarProductos } = useProductos
-    const { productos } = storeToRefs(useProductos)
+    // const { productos } = storeToRefs(useProductos)
 
     const useClientes = useClientesStore()
     const { clientes } = storeToRefs(useClientes)
     const useInventario = useInventariosStore()
     const { actualizarCantidadInventario } = useInventario
-    // const { inventarios } = storeToRefs(useInventario)
+    const { inventarios } = storeToRefs(useInventario)
 
     const clientesOpciones = computed(() => {
       return clientes.value.map(cliente => {
@@ -150,21 +150,33 @@ export default {
         }
       })
     })
-    const productosOpciones = ref(
-      productos.value.map(producto => {
+    // const productosOpciones = ref(
+    //   productos.value.map(producto => {
+    //     return {
+    //       id: producto._id,
+    //       label: producto.nombreProducto,
+    //       children: producto.nombreProducto,
+    //       precio: producto.precio,
+    //       cantidad: 1,
+    //       total: producto.precio,
+    //       codigoBarras: producto.codigoBarras
+    //     }
+    //   })
+    // )
+    const inventariosOpciones = ref(
+      inventarios.value.map(inventario => {
         return {
-          id: producto._id,
-          label: producto.nombreProducto,
-          children: producto.nombreProducto,
-          precio: producto.precio,
+          id: inventario._id,
+          label: inventario.nombreProducto,
+          precio: inventario.precioSalida,
           cantidad: 1,
-          total: producto.precio,
-          codigoBarras: producto.codigoBarras
+          total: inventario.precioSalida,
+          codigoBarras: inventario.codigoBarras
         }
       })
     )
     const clientesNuevos = ref(clientesOpciones.value)
-    const productosNuevos = ref(productosOpciones.value)
+    const productosNuevos = ref(inventariosOpciones.value)
     const abrir = (esNuevoRegistro) => {
       const ventaNueva = {
         clienteId: null,
@@ -208,7 +220,7 @@ export default {
     }
     const createValue = (val, done) => {
       if (val.length > 2) {
-        if (!productosOpciones.value.includes(val)) {
+        if (!inventariosOpciones.value.includes(val)) {
           done(val, 'add-unique')
         }
       }
@@ -217,10 +229,10 @@ export default {
     const filterFn = (val, update) => {
       update(() => {
         if (val === '') {
-          productosNuevos.value = productosOpciones.value
+          productosNuevos.value = inventariosOpciones.value
         } else {
           const needle = val.toLowerCase()
-          productosNuevos.value = productosOpciones.value.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
+          productosNuevos.value = inventariosOpciones.value.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
         }
       })
     }
