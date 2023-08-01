@@ -1,4 +1,5 @@
 <template>
+<div>
     <div class="q-mb-md">
         <q-input
             label="Buscar producto por codigo de barras"
@@ -56,6 +57,26 @@
             />
         </div>
 
+        <div class=" q-my-sm">
+            <label>Precio de compra</label>
+            <q-input
+                v-model="inventario.precioCompra"
+                type="number"
+                :label= "nuevoRegistro ? 'Ingresa el precio de compra': 'Edita el precio de compra'"
+                outlined
+            />
+        </div>
+
+        <div class=" q-my-sm">
+            <label>Precio de salida</label>
+            <q-input
+                v-model="inventario.precioSalida"
+                type="number"
+                :label= "nuevoRegistro ? 'Ingresa el precio de salida': 'Edita el precio de salida'"
+                outlined
+            />
+        </div>
+
         <div class="q-my-md">
             <q-btn
                 :label= "nuevoRegistro ? 'Guardar inventario' : 'Editar Inventario'"
@@ -72,7 +93,7 @@
             </q-card-section>
         </q-card>
     </div>
-
+</div>
 </template>
 
 <script setup>

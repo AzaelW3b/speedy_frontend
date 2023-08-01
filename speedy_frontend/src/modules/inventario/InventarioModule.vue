@@ -90,6 +90,20 @@ const columns = [
     sortable: true
   },
   {
+    name: 'precioCompra',
+    label: 'Precio de compra',
+    field: 'precioCompra',
+    align: 'left',
+    sortable: true
+  },
+  {
+    name: 'precioSalida',
+    label: 'Precio de salida',
+    field: 'precioSalida',
+    align: 'left',
+    sortable: true
+  },
+  {
     name: 'acciones',
     label: 'Acciones',
     field: 'acciones',
