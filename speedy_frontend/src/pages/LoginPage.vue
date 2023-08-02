@@ -21,9 +21,7 @@
                 v-model="usuarioObj.correo"
                 label="Ingresa el usuario"
                 :rules="[
-                  (val) =>
-                    (val && val.length > 0) ||
-                    'Debes ingresar un nombre de usuario',
+                  (val) => validacionCampoVacio(val, 'Debes ingresar un nombre de usuario')
                 ]"
               >
                 <template v-slot:append>
@@ -38,6 +36,9 @@
                 filled
                 :type="isPassword ? 'password' : 'text'"
                 label="Ingresa la contraseña"
+                :rules="[
+                  (val) => validacionCampoVacio(val, 'Debes ingresar la contraseña')
+                ]"
               >
                 <template v-slot:append>
                   <q-icon
@@ -60,7 +61,7 @@
 import { useAutenticacionStore } from '../stores/autenticaciones'
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-
+import { validacionCampoVacio } from 'src/helpers/validaciones'
 export default {
   setup () {
     const useAutenticacion = useAutenticacionStore()
@@ -91,7 +92,8 @@ export default {
       usuarioObj,
       isPassword,
       login,
-      formulario
+      formulario,
+      validacionCampoVacio
     }
   }
 }
