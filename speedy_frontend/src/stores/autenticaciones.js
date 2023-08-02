@@ -18,13 +18,11 @@ export const useAutenticacionStore = defineStore('autenticaciones', () => {
       localStorage.setItem('isAdmin', data.isAdmin)
     } catch (error) {
       mensajeUsuario('negative', error.response.data.msg)
-      console.log(error.response.data.msg)
     }
   }
 
   // iniciar sesion como cliente
   const iniciarSesionCliente = async (usuario) => {
-    console.log('cliente')
     try {
       const { data } = await api.post('/clientes/login', usuario)
       isLogin.value = true
@@ -33,7 +31,7 @@ export const useAutenticacionStore = defineStore('autenticaciones', () => {
       localStorage.setItem('token', data.token)
       localStorage.setItem('isAdmin', data.isAdmin)
     } catch (error) {
-      console.log(error.response.data.msg)
+      mensajeUsuario('negative', error.response.data.msg)
     }
   }
 
@@ -55,7 +53,7 @@ export const useAutenticacionStore = defineStore('autenticaciones', () => {
     const token = localStorage.getItem('token')
 
     if (!token) {
-      console.log('No hay token')
+      mensajeUsuario('negative', 'Se ha cerrado sesión, inicia nuevamente.')
       return
     }
 
@@ -78,7 +76,7 @@ export const useAutenticacionStore = defineStore('autenticaciones', () => {
         usuarioAutenticado.value = { ...data }
       }
     } catch (error) {
-      console.log(error.response.msg)
+      mensajeUsuario('negative', error.response.data.msg)
     }
   }
 
