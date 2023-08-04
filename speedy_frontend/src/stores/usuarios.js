@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { api } from 'src/boot/axios'
+import { mensajeUsuario } from 'src/helpers/mensajes'
 
 export const useUsuariosStore = defineStore('usuarios', () => {
   const usuarios = ref([])
@@ -10,7 +11,8 @@ export const useUsuariosStore = defineStore('usuarios', () => {
   const guardarUsuarios = async (usuario) => {
     try {
       const { data } = await api.post('/usuarios', usuario)
-      usuarios.value = [...usuarios.value, data]
+      usuarios.value = [data, ...usuarios.value]
+      mensajeUsuario('positive', `Usuario ${data?.nombreUsuario} creado de manera correcta`)
     } catch (error) {
       console.log(error)
     }
@@ -30,7 +32,7 @@ export const useUsuariosStore = defineStore('usuarios', () => {
       const { data } = await api.put(`/usuarios/${usuario._id}`, usuario)
       const usuarioOriginal = usuarios.value.find(usuarioIndex => usuarioIndex._id === usuario._id)
       Object.assign(usuarioOriginal, usuario)
-      console.log(data)
+      mensajeUsuario('positive', `${data?.msg} de manera correcta`)
     } catch (error) {
       console.log(error)
     }
@@ -39,18 +41,15 @@ export const useUsuariosStore = defineStore('usuarios', () => {
   const eliminarUsuarios = async (id) => {
     try {
       const { data } = await api.delete(`/usuarios/${id}`)
-      console.log(data)
       usuarios.value = usuarios.value.filter(usuario => usuario._id !== id)
+      mensajeUsuario('positive', `${data?.msg} de manera correcta`)
     } catch (error) {
       console.log(error)
     }
   }
-
   const obtenerUsuariosId = (id) => {
     usuario.value = usuarios.value.find(usuario => usuario._id === id)
   }
-
-  // obtener usuarios por id
   return {
     // states
     usuarios,

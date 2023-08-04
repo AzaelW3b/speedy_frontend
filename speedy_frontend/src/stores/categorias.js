@@ -10,7 +10,6 @@ export const useCategoriasStore = defineStore('categorias', () => {
   const guardarCategorias = async (categoria) => {
     try {
       const { data } = await api.post('/categorias', categoria)
-      console.log(data)
       categorias.value = [...categorias.value, data]
     } catch (error) {
       console.log(error.response.data.msg)
@@ -20,7 +19,6 @@ export const useCategoriasStore = defineStore('categorias', () => {
   const obtenerCategorias = async () => {
     try {
       const { data } = await api.get('/categorias')
-      console.log(data)
       categorias.value = data
     } catch (error) {
       console.log(error)

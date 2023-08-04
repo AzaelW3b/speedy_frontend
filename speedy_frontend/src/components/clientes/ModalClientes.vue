@@ -210,7 +210,6 @@ export default {
     const guardarCliente = () => {
       if (nuevoRegistro.value) {
         const clienteNuevo = { ...clienteObj }
-        // console.log(clienteNuevo)
         guardarClientes(clienteNuevo)
       } else {
         editarClientes(clienteObj)

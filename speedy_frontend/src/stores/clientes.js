@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { api } from 'src/boot/axios'
+import { mensajeUsuario } from 'src/helpers/mensajes'
 
 export const useClientesStore = defineStore('clientes', () => {
   const clientes = ref([])
@@ -51,10 +52,12 @@ export const useClientesStore = defineStore('clientes', () => {
           const respuesta = await api.put(`/clientes/${primerCliente._id}`, primerCliente)
           console.log(respuesta.data)
         }
-        clientes.value = [...clientes.value, data]
+        clientes.value = [data, ...clientes.value]
+        mensajeUsuario('positive', `Cliente ${data?.nombreCliente} creado de manera correcta`)
       } else {
         const { data } = await api.post('/clientes', cliente)
-        clientes.value = [...clientes.value, data]
+        clientes.value = [data, ...clientes.value]
+        mensajeUsuario('positive', `Cliente ${data?.nombreCliente} creado de manera correcta`)
       }
     } catch (error) {
       console.log(error)

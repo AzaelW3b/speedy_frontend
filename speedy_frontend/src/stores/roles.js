@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { api } from 'src/boot/axios'
+import { mensajeUsuario } from 'src/helpers/mensajes'
 
 export const useRolesStore = defineStore('roles', () => {
   const roles = ref([])
@@ -10,7 +11,8 @@ export const useRolesStore = defineStore('roles', () => {
   const guardarRoles = async (rol) => {
     try {
       const { data } = await api.post('/roles', rol)
-      roles.value = [...roles.value, data]
+      roles.value = [data, ...roles.value]
+      mensajeUsuario('positive', `Rol ${data?.rol} creado de manera correcta.`)
     } catch (error) {
       console.log(error.response.data.msg)
     }
@@ -19,7 +21,6 @@ export const useRolesStore = defineStore('roles', () => {
   const obtenerRoles = async () => {
     try {
       const { data } = await api.get('/roles')
-      console.log(data)
       roles.value = data
     } catch (error) {
       console.log(error.response.data.msg)
@@ -29,9 +30,9 @@ export const useRolesStore = defineStore('roles', () => {
   const editarRoles = async (rol) => {
     try {
       const { data } = await api.put(`/roles/${rol._id}`, rol)
-      console.log(data)
       const rolOriginal = roles.value.find(rolIndex => rolIndex._id === rol._id)
       Object.assign(rolOriginal, rol)
+      mensajeUsuario('positive', `${data?.msg} de manera correcta`)
     } catch (error) {
       console.log(error.response.data.msg)
     }
@@ -40,8 +41,8 @@ export const useRolesStore = defineStore('roles', () => {
   const eliminarRoles = async (id) => {
     try {
       const { data } = await api.delete(`/roles/${id}`)
-      console.log(data)
       roles.value = roles.value.filter(rol => rol._id !== id)
+      mensajeUsuario('positive', `${data?.msg} de manera correcta`)
     } catch (error) {
       console.log(error.response.data.msg)
     }
@@ -50,8 +51,6 @@ export const useRolesStore = defineStore('roles', () => {
   const obtenerRolesId = (id) => {
     rol.value = roles.value.find(rol => rol._id === id)
   }
-
-  // obtener roles por id
   return {
     // states
     roles,

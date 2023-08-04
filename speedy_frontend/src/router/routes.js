@@ -6,11 +6,8 @@ function checarRole (to, from, next, rol) {
   const { usuarioAutenticado } = storeToRefs(useAutenticacion)
 
   if (usuarioAutenticado && rol?.includes(usuarioAutenticado?.value?.usuario?.rol)) {
-    console.log(usuarioAutenticado?.value?.usuario?.rol === rol)
     next()
   } else {
-    // console.log('toooo', to)
-    // console.log('froooom', from)
     next({ name: 'dashboard' })
   }
 }

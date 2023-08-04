@@ -46,7 +46,6 @@ onMounted(() => {
 const usuarioRol = (rol) => {
   const useUsuarioAutenticado = useAutenticacionStore()
   const { usuarioAutenticado } = storeToRefs(useUsuarioAutenticado)
-  console.log(usuarioAutenticado?.value?.usuario?.rol)
   return rol?.includes(usuarioAutenticado?.value?.usuario?.rol)
 }
 </script>

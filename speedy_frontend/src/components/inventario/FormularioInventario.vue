@@ -132,7 +132,6 @@ const guardarInventario = () => {
     cantidad: parseInt(cantidad.value) || inventario?.value?.cantidad
   }
   if (nuevoRegistro.value) {
-    console.log(nuevoRegistro.value)
     guardarInventarios(nuevoInventario)
     limpiarEstado()
   } else {

@@ -80,7 +80,6 @@ export const useVentasStore = defineStore('ventas', () => {
     try {
       const { data } = await api.get('/ventas/ventasDia')
       ventaDia.value = data
-      console.log('se ejeecutooo')
     } catch (error) {
       console.log(error)
     }
