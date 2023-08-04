@@ -32,7 +32,7 @@ export const useRolesStore = defineStore('roles', () => {
       const { data } = await api.put(`/roles/${rol._id}`, rol)
       const rolOriginal = roles.value.find(rolIndex => rolIndex._id === rol._id)
       Object.assign(rolOriginal, rol)
-      mensajeUsuario('positive', `${data?.msg} de manera correcta`)
+      mensajeUsuario('positive', `${data?.msg || 'Rol editado'} de manera correcta`)
     } catch (error) {
       console.log(error.response.data.msg)
     }

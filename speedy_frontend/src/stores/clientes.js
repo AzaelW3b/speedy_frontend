@@ -31,7 +31,7 @@ export const useClientesStore = defineStore('clientes', () => {
             [...clienteQueInvitoObj.invitados, { cliente: data._id, nivel }]
           // actualizamos el registro
           const respuesta = await api.put(`/clientes/${clienteQueInvitoObj._id}`, clienteQueInvitoObj)
-          console.log(respuesta.data)
+          mensajeUsuario('positive', `Cliente ${respuesta?.data?.nombreCliente} lleva ${respuesta?.data?.invitados?.length} invitados.`)
         }
         // evaluación del nivel 2
         if (clientePrincipal !== null) {
@@ -40,7 +40,7 @@ export const useClientesStore = defineStore('clientes', () => {
           clientePrincipal.invitados =
             [...clientePrincipal.invitados, { cliente: data._id, nivel }]
           const respuesta = await api.put(`/clientes/${clientePrincipal._id}`, clientePrincipal)
-          console.log(respuesta.data)
+          mensajeUsuario('positive', `Cliente ${respuesta?.data?.nombreCliente} lleva ${respuesta?.data?.invitados?.length} invitados.`)
         }
 
         // evaluación nivel 3
@@ -50,7 +50,7 @@ export const useClientesStore = defineStore('clientes', () => {
           primerCliente.invitados =
           [...primerCliente.invitados, { cliente: data._id, nivel }]
           const respuesta = await api.put(`/clientes/${primerCliente._id}`, primerCliente)
-          console.log(respuesta.data)
+          mensajeUsuario('positive', `Cliente ${respuesta?.data?.nombreCliente} lleva ${respuesta?.data?.invitados?.length} invitados.`)
         }
         clientes.value = [data, ...clientes.value]
         mensajeUsuario('positive', `Cliente ${data?.nombreCliente} creado de manera correcta`)
@@ -60,7 +60,7 @@ export const useClientesStore = defineStore('clientes', () => {
         mensajeUsuario('positive', `Cliente ${data?.nombreCliente} creado de manera correcta`)
       }
     } catch (error) {
-      console.log(error)
+      mensajeUsuario('negative', `Algo falló en la creación del cliente favor de reportar a soporte. ${error}`)
     }
   }
   // obtener
@@ -69,7 +69,7 @@ export const useClientesStore = defineStore('clientes', () => {
       const { data } = await api.get('/clientes')
       clientes.value = data
     } catch (error) {
-      console.log(error)
+      mensajeUsuario('negative', `Error al obtener clientes favor de reportar a soporte. ${error}`)
     }
   }
   // editar
@@ -78,9 +78,9 @@ export const useClientesStore = defineStore('clientes', () => {
       const { data } = await api.put(`/clientes/${cliente._id}`, cliente)
       const clienteOriginal = clientes.value.find(clienteIndex => clienteIndex._id === cliente._id)
       Object.assign(clienteOriginal, data)
-      console.log(data)
+      mensajeUsuario('positive', `${data?.msg || 'Cliente editado'} de manera correcta`)
     } catch (error) {
-      console.log(error)
+      mensajeUsuario('negative', `Algo falló en la edición del cliente favor de reportar a soporte. ${error}`)
     }
   }
   // eliminar
@@ -88,9 +88,9 @@ export const useClientesStore = defineStore('clientes', () => {
     try {
       const { data } = await api.delete(`/clientes/${id}`)
       clientes.value = clientes.value.filter(cliente => cliente._id !== id)
-      console.log(data)
+      mensajeUsuario('positive', `${data?.msg} de manera correcta`)
     } catch (error) {
-      console.log(error)
+      mensajeUsuario('negative', `Algo falló en la eliminación del cliente favor de reportar a soporte. ${error}`)
     }
   }
 

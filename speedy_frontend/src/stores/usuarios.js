@@ -32,7 +32,7 @@ export const useUsuariosStore = defineStore('usuarios', () => {
       const { data } = await api.put(`/usuarios/${usuario._id}`, usuario)
       const usuarioOriginal = usuarios.value.find(usuarioIndex => usuarioIndex._id === usuario._id)
       Object.assign(usuarioOriginal, usuario)
-      mensajeUsuario('positive', `${data?.msg} de manera correcta`)
+      mensajeUsuario('positive', `${data?.msg || 'Usuario editado'} de manera correcta`)
     } catch (error) {
       console.log(error)
     }
