@@ -2,6 +2,7 @@ import { defineStore, storeToRefs } from 'pinia'
 import { ref } from 'vue'
 import { api } from 'src/boot/axios'
 import { useClientesStore } from './clientes'
+import { mensajeUsuario } from 'src/helpers/mensajes'
 
 export const useVentasStore = defineStore('ventas', () => {
   const ventas = ref([])
@@ -13,29 +14,31 @@ export const useVentasStore = defineStore('ventas', () => {
   const guardarVentas = async (venta) => {
     try {
       const { data } = await api.post('/ventas', venta)
-      ventas.value = [...ventas.value, data]
+      ventas.value = [data, ...ventas.value]
+      mensajeUsuario('positive', 'Se Registro la venta de manera correcta')
     } catch (error) {
-      console.log(error.response.data.msg)
+      mensajeUsuario('negative', `${error?.response?.data?.msg}`)
     }
   }
+
   // obtener productos
   const obtenerVentas = async () => {
     try {
       const { data } = await api.get('/ventas')
       ventas.value = data
     } catch (error) {
-      console.log(error.response.data.msg)
+      mensajeUsuario('negative', `Algo fallo al obtener las ventas, favor de reportar a soporte. ${error}`)
     }
   }
   // editar productos
   const editarVentas = async (venta) => {
     try {
-      const { data } = await api.put(`/ventas/${venta._id}`, venta)
+      await api.put(`/ventas/${venta._id}`, venta)
       const ventaOriginal = ventas.value.find(ventaIndex => ventaIndex._id === venta._id)
       Object.assign(ventaOriginal, venta)
-      console.log(data)
+      mensajeUsuario('positive', 'Venta editada de manera correcta')
     } catch (error) {
-      console.log(error.response.data.msg)
+      mensajeUsuario('negative', `${error?.response?.data?.msg}`)
     }
   }
 
@@ -44,9 +47,9 @@ export const useVentasStore = defineStore('ventas', () => {
     try {
       const { data } = await api.delete(`/ventas/${id}`)
       ventas.value = ventas.value.filter(venta => venta._id !== id)
-      console.log(data)
+      mensajeUsuario('positive', `${data?.msg} de manera correcta`)
     } catch (error) {
-      console.log(error)
+      mensajeUsuario('negative', `${error?.response?.data?.msg}`)
     }
   }
 
@@ -55,7 +58,7 @@ export const useVentasStore = defineStore('ventas', () => {
       const { data } = await api.get(`/ventas/ventasCliente/${id}`)
       ventasCliente.value = data
     } catch (error) {
-      console.log(error)
+      mensajeUsuario('negative', `Algo fallo al obtener las ventas del cliente, favor de reportar a soporte. ${error}`)
     }
   }
 
@@ -73,15 +76,19 @@ export const useVentasStore = defineStore('ventas', () => {
     return cliente?.nombreCliente
   }
   const obtenerVentasClienteId = async (id) => {
-    const { data } = await api.get(`/ventas/ventasClienteId/${id}`)
-    ventasClienteId.value = data
+    try {
+      const { data } = await api.get(`/ventas/ventasClienteId/${id}`)
+      ventasClienteId.value = data
+    } catch (error) {
+      mensajeUsuario('negative', `Algo fallo al obtener las ventas del cliente, favor de reportar a soporte. ${error}`)
+    }
   }
   const obtenerVentaDia = async () => {
     try {
       const { data } = await api.get('/ventas/ventasDia')
       ventaDia.value = data
     } catch (error) {
-      console.log(error)
+      mensajeUsuario('negative', `Algo fallo al obtener las ventas por dia, favor de reportar a soporte. ${error}`)
     }
   }
   return {

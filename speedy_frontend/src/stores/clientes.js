@@ -60,7 +60,7 @@ export const useClientesStore = defineStore('clientes', () => {
         mensajeUsuario('positive', `Cliente ${data?.nombreCliente} creado de manera correcta`)
       }
     } catch (error) {
-      mensajeUsuario('negative', `Algo falló en la creación del cliente favor de reportar a soporte. ${error}`)
+      mensajeUsuario('negative', `Algo fallo en la creación del cliente favor de reportar a soporte. ${error}`)
     }
   }
   // obtener
@@ -80,7 +80,7 @@ export const useClientesStore = defineStore('clientes', () => {
       Object.assign(clienteOriginal, data)
       mensajeUsuario('positive', `${data?.msg || 'Cliente editado'} de manera correcta`)
     } catch (error) {
-      mensajeUsuario('negative', `Algo falló en la edición del cliente favor de reportar a soporte. ${error}`)
+      mensajeUsuario('negative', `Algo fallo en la edición del cliente favor de reportar a soporte. ${error}`)
     }
   }
   // eliminar
@@ -90,7 +90,7 @@ export const useClientesStore = defineStore('clientes', () => {
       clientes.value = clientes.value.filter(cliente => cliente._id !== id)
       mensajeUsuario('positive', `${data?.msg} de manera correcta`)
     } catch (error) {
-      mensajeUsuario('negative', `Algo falló en la eliminación del cliente favor de reportar a soporte. ${error}`)
+      mensajeUsuario('negative', `Algo fallo en la eliminación del cliente favor de reportar a soporte. ${error}`)
     }
   }
 

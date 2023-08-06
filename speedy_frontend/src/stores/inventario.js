@@ -2,6 +2,7 @@ import { defineStore, storeToRefs } from 'pinia'
 import { ref } from 'vue'
 import { api } from 'src/boot/axios'
 import { useProductosStore } from './productos'
+import { mensajeUsuario } from 'src/helpers/mensajes'
 
 export const useInventariosStore = defineStore('inventarios', () => {
   const inventarios = ref([])
@@ -15,10 +16,10 @@ export const useInventariosStore = defineStore('inventarios', () => {
   const guardarInventarios = async (inventario) => {
     try {
       const { data } = await api.post('/inventario', inventario)
-      inventarios.value = [...inventarios.value, data]
-      console.log(data)
+      inventarios.value = [data, ...inventarios.value]
+      mensajeUsuario('positive', `Producto ${data?.nombreProducto} agregado al inventario de manera correcta`)
     } catch (error) {
-      console.log(error)
+      mensajeUsuario('negative', `${error?.response?.data?.msg}`)
     }
   }
   const obtenerInventarios = async () => {
@@ -26,7 +27,7 @@ export const useInventariosStore = defineStore('inventarios', () => {
       const { data } = await api.get('/inventario')
       inventarios.value = data
     } catch (error) {
-      console.log(error)
+      mensajeUsuario('negative', `Algo fallo al obtener el inventario favor de reportar a soporte. ${error}`)
     }
   }
   const buscarProductoCodigo = (codigoBarras) => {
@@ -37,25 +38,24 @@ export const useInventariosStore = defineStore('inventarios', () => {
     inventario.value = inventarios.value.find(inventario => inventario.codigoBarras === codigoBarras)
     nuevoRegistro.value = false
     busquedaCodigoBarras.value = inventario.value.codigoBarras
-    console.log(inventario.value)
   }
   const editarInventario = async (inventario) => {
     try {
       const { data } = await api.put(`/inventario/${inventario.codigoBarras}`, inventario)
       const inventarioOriginal = inventarios.value.find(inventarioIndex => inventarioIndex.codigoBarras === inventario.codigoBarras)
       Object.assign(inventarioOriginal, inventario)
-      console.log(data)
+      mensajeUsuario('positive', `Producto del inventario ${data?.nombreProducto} editado de manera correcta`)
     } catch (error) {
-      console.log(error.response.data.msg)
+      mensajeUsuario('negative', `${error?.response?.data?.msg}`)
     }
   }
   const eliminarInventario = async (id) => {
     try {
       const { data } = await api.delete(`/inventario/${id}`)
       inventarios.value = inventarios.value.filter(inventario => inventario._id !== id)
-      console.log(data)
+      mensajeUsuario('positive', `Producto del ${data?.msg} de manera correcta`)
     } catch (error) {
-      console.log(error.response.data.msg)
+      mensajeUsuario('negative', `${error?.response?.data?.msg}`)
     }
   }
   const actualizarCantidadInventario = async (inventario) => {
@@ -65,9 +65,10 @@ export const useInventariosStore = defineStore('inventarios', () => {
         const restaInventario = inventarioOriginal.cantidad - inventarioCodigoBarras.cantidad
         inventarioOriginal.cantidad = restaInventario
         await api.put(`/inventario/${inventarioOriginal.codigoBarras}`, inventarioOriginal)
+        mensajeUsuario('positive', `Se actualizo la cantidad del producto ${inventarioOriginal.nombreProducto} en el inventario`)
       }
     } catch (error) {
-      console.log(error)
+      mensajeUsuario('negative', `${error?.response?.data?.msg}`)
     }
   }
   return {

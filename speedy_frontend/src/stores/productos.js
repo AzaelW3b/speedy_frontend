@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { api } from 'src/boot/axios'
+import { mensajeUsuario } from 'src/helpers/mensajes'
 
 export const useProductosStore = defineStore('productos', () => {
   const productos = ref([])
@@ -11,9 +12,10 @@ export const useProductosStore = defineStore('productos', () => {
   const guardarProductos = async (producto) => {
     try {
       const { data } = await api.post('/productos', producto)
-      productos.value = [...productos.value, data]
+      productos.value = [data, ...productos.value]
+      mensajeUsuario('positive', `Producto ${data?.nombreProducto} creado de manera correcta`)
     } catch (error) {
-      console.log(error.response.data.msg)
+      mensajeUsuario('negative', `${error?.response?.data?.msg}`)
     }
   }
   // obtener productos
@@ -22,7 +24,7 @@ export const useProductosStore = defineStore('productos', () => {
       const { data } = await api.get('/productos')
       productos.value = data
     } catch (error) {
-      console.log(error)
+      mensajeUsuario('negative', `Algo fallo al obtener el inventario favor de reportar a soporte. ${error}`)
     }
   }
   // editar productos
@@ -32,9 +34,9 @@ export const useProductosStore = defineStore('productos', () => {
       const { data } = await api.put(`/productos/${producto._id}`, producto)
       const productoOriginal = productos.value.find(productoIndex => productoIndex._id === producto._id)
       Object.assign(productoOriginal, producto)
-      console.log(data)
+      mensajeUsuario('positive', `Producto ${data?.nombreProducto} editado de manera correcta`)
     } catch (error) {
-      console.log(error.response.data.msg)
+      mensajeUsuario('negative', `${error?.response?.data?.msg}`)
     }
   }
 
@@ -43,9 +45,9 @@ export const useProductosStore = defineStore('productos', () => {
     try {
       const { data } = await api.delete(`/productos/${id}`)
       productos.value = productos.value.filter(producto => producto._id !== id)
-      console.log(data)
+      mensajeUsuario('positive', `${data?.msg} de manera correcta`)
     } catch (error) {
-      console.log(error.response.data.msg)
+      mensajeUsuario('negative', `${error?.response?.data?.msg}`)
     }
   }
 
