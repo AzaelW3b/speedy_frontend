@@ -10,7 +10,7 @@ const generateAndDownloadBarcodeInPDF = (cliente) => {
       format: [85, 54]
     })
     // doc.addImage('dist/spa/assets/speedy.3883bbfb.png', 'PNG', 0, 0, doc.internal.pageSize.getWidth(), doc.internal.pageSize.getHeight())
-    doc.addImage('https://speedyapp.netlify.app/assets/speedy.3883bbfb.png', 'PNG', 0, 0, doc.internal.pageSize.getWidth(), doc.internal.pageSize.getHeight())
+    doc.addImage('https://speedyred.com/assets/speedy.3883bbfb.png', 'PNG', 0, 0, doc.internal.pageSize.getWidth(), doc.internal.pageSize.getHeight())
     doc.addPage()
     // Texto a centrar
     const nombreCliente = cliente.nombreCliente

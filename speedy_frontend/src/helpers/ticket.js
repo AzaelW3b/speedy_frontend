@@ -8,7 +8,7 @@ export const generarTicket = (venta) => {
 
   // Añade el contenido del ticket al PDF
   const img = new Image()
-  img.src = 'https://speedyapp.netlify.app/assets/speedy.3883bbfb.png'
+  img.src = 'https://speedyred.com//assets/speedy.3883bbfb.png'
 
   img.onload = () => {
     const imgWidth = 40
