@@ -95,15 +95,27 @@ const routes = [
         beforeEnter: (to, from, next) => checarRole(to, from, next, ['admin', 'cajero'])
 
       },
+      // {
+      //   path: 'ventas',
+      //   icono: 'shopping_cart',
+      //   label: 'Ventas',
+      //   name: 'ventas',
+      //   // se ponen los roles que no debe ver cierto usuario
+      //   meta: { roles: ['socio'] },
+      //   // usuario que si puede ver
+      //   component: () => import('src/modules/ventas/VentasModule.vue'),
+      //   beforeEnter: (to, from, next) => checarRole(to, from, next, ['admin', 'cajero'])
+
+      // },
       {
-        path: 'ventas',
-        icono: 'shopping_cart',
-        label: 'Ventas',
-        name: 'ventas',
+        path: 'compras_cliente',
+        icono: 'add_shopping_cart',
+        label: 'Registro de compras',
+        name: 'compras_cliente',
         // se ponen los roles que no debe ver cierto usuario
         meta: { roles: ['socio'] },
         // usuario que si puede ver
-        component: () => import('src/modules/ventas/VentasModule.vue'),
+        component: () => import('src/modules/registroComprasCliente/RegistroComprasCliente.vue'),
         beforeEnter: (to, from, next) => checarRole(to, from, next, ['admin', 'cajero'])
 
       },

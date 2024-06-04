@@ -67,6 +67,7 @@ export const useClientesStore = defineStore('clientes', () => {
   const obtenerClientes = async () => {
     try {
       const { data } = await api.get('/clientes')
+      console.log(data)
       clientes.value = data
     } catch (error) {
       mensajeUsuario('negative', `Error al obtener clientes favor de reportar a soporte. ${error}`)

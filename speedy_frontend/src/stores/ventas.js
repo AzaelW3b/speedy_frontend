@@ -15,6 +15,7 @@ export const useVentasStore = defineStore('ventas', () => {
     try {
       const { data } = await api.post('/ventas', venta)
       ventas.value = [data, ...ventas.value]
+      console.log('La venta bd', data)
       mensajeUsuario('positive', 'Se Registro la venta de manera correcta')
     } catch (error) {
       mensajeUsuario('negative', `${error?.response?.data?.msg}`)
