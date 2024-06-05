@@ -12,8 +12,13 @@
       <div class="row q-my-sm">
         <q-card-section class="col-12 q-pt-none">
           <label>Cliente</label>
-          <q-select outlined v-model="ventaRegistroCompraObj.clienteId" use-input input-debounce="0"
-            label="Selecciona el cliente" :options="clientesNuevos" @filter="parametrosFiltradosClientes"
+          <q-select
+            outlined
+            v-model="ventaRegistroCompraObj.clienteId"
+            use-input input-debounce="0"
+            label="Selecciona el cliente"
+            :options="clientesNuevos"
+            @filter="parametrosFiltradosClientes"
             behavior="menu">
             <template v-slot:no-option>
               <q-item>
@@ -64,7 +69,6 @@ import { useVentasStore } from 'src/stores/ventas'
 import { editarRegistros } from 'src/helpers/editarRegistros'
 import { storeToRefs } from 'pinia'
 import { filtradoBusquedaObj } from 'src/helpers/filtradoBusquedaObj'
-import { formatearFecha } from '../../helpers/formatearFecha'
 
 export default {
   setup () {
@@ -75,55 +79,12 @@ export default {
       tipoMembresia: '',
       nivel: 0,
       cashback: 0.0,
-      totalCompra: 0
+      totalCompra: 0,
+      fecha: '',
+      folio: ''
 
     })
     const nuevoRegistro = ref(true)
-
-    const columns = [
-      {
-        name: 'label',
-        label: 'Producto',
-        field: 'label',
-        align: 'left',
-        sortable: true
-      },
-      {
-        name: 'cantidad',
-        label: 'cantidad',
-        field: 'cantidad',
-        align: 'left',
-        sortable: true
-      },
-      {
-        name: 'precio',
-        label: 'Precio',
-        field: 'precio',
-        align: 'left',
-        sortable: true
-      },
-      {
-        name: 'total',
-        label: 'Total',
-        field: 'total',
-        align: 'left',
-        sortable: true
-      },
-      {
-        name: 'fecha',
-        label: 'Fecha de venta',
-        field: row => formatearFecha(row?.fecha),
-        align: 'left',
-        sortable: true
-      },
-      {
-        name: 'acciones',
-        label: 'Acciones',
-        field: 'acciones',
-        align: 'left',
-        sortable: true
-      }
-    ]
 
     const useVentas = useVentasStore()
     const { guardarVentas, editarVentas } = useVentas
@@ -149,7 +110,9 @@ export default {
         tipoMembresia: '',
         nivel: 0,
         cashback: 0.0,
-        totalCompra: 0
+        totalCompra: 0,
+        fecha: '',
+        folio: ''
       }
       if (!esNuevoRegistro) {
         ventaNueva._id = null
@@ -169,10 +132,14 @@ export default {
       if (nuevoRegistro.value) {
         const ventaNueva = { ...ventaRegistroCompraObj }
         ventaNueva.clienteId = ventaNueva?.clienteId?.value
-        console.log('la venta antes de guardar en la bd', ventaNueva)
         guardarVentas(ventaNueva)
       } else {
-        editarVentas(ventaRegistroCompraObj)
+        const ventaEditada = {
+          ...ventaRegistroCompraObj,
+          clienteId: ventaRegistroCompraObj?.clienteId?.id
+        }
+        console.log('Venta editada', ventaEditada)
+        editarVentas(ventaEditada)
       }
     }
 
@@ -183,6 +150,7 @@ export default {
         if (cliente === undefined || cliente === null) return
         // evaluación del nivel
         let BONO_RESIDUAL = 0
+        console.log(cliente)
         switch (cliente.niveles > 0) {
           case cliente.tipoMembresia === 'A':
             if (cliente.niveles === 1) {
@@ -221,6 +189,8 @@ export default {
         ventaRegistroCompraObj.tipoMembresia = cliente.tipoMembresia
         ventaRegistroCompraObj.nivel = cliente.niveles
         ventaRegistroCompraObj.cashback = BONO_RESIDUAL
+
+        console.log(ventaRegistroCompraObj)
       } else {
         clienteSeleccionado.value = false
         ventaRegistroCompraObj.totalCompra = 0
@@ -232,7 +202,6 @@ export default {
       modalRegistroCompraCliente,
       ventaRegistroCompraObj,
       clientesNuevos,
-      columns,
       clienteSeleccionado,
       // metodos
       abrir,

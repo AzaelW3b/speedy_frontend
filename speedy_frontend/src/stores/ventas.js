@@ -34,9 +34,11 @@ export const useVentasStore = defineStore('ventas', () => {
   // editar productos
   const editarVentas = async (venta) => {
     try {
-      await api.put(`/ventas/${venta._id}`, venta)
+      console.log(venta)
+      const { data } = await api.put(`/ventas/${venta._id}`, venta)
+      console.log(data)
       const ventaOriginal = ventas.value.find(ventaIndex => ventaIndex._id === venta._id)
-      Object.assign(ventaOriginal, venta)
+      Object.assign(ventaOriginal, data)
       mensajeUsuario('positive', 'Venta editada de manera correcta')
     } catch (error) {
       mensajeUsuario('negative', `${error?.response?.data?.msg}`)
@@ -65,7 +67,16 @@ export const useVentasStore = defineStore('ventas', () => {
 
   // obtener productos Id
   const obtenerVentasId = (id) => {
-    venta.value = ventas.value.find(venta => venta._id === id)
+    const ventaObject = ventas.value.find(venta => venta._id === id)
+    const ventaObjectFormat = {
+      ...ventaObject,
+      clienteId: {
+        id: ventaObject?.clienteId?._id,
+        label: ventaObject?.clienteId?.nombreCliente,
+        value: ventaObject?.clienteId?._id
+      }
+    }
+    venta.value = ventaObjectFormat
   }
 
   // obtener cliente por Id

@@ -21,7 +21,7 @@
         <template  v-slot:top>
               <div class="fit row q-gutter-sm justify-end">
                 <div class="col-4">
-                  <q-input outlined dense debounce="300" clearable v-model="buscar" placeholder="Buscar usuario">
+                  <q-input outlined dense debounce="300" clearable v-model="buscar" placeholder="Buscar venta">
                     <template v-slot:append>
                       <q-icon name="search" />
                     </template>
@@ -37,15 +37,15 @@
                 color="dark"
                 icon="edit"
               >
-                <q-tooltip>{{ `Editar al usuario ${props.row.nombreUsuario}` }}</q-tooltip>
+                <q-tooltip>{{ `Editar la venta de ${props?.row?.clienteId?.nombreCliente}` }}</q-tooltip>
               </q-btn>
               <q-btn
-                @click="confirmarEliminarUsuario(props.row)"
+                @click="confirmarEliminarCompraCliente(props.row)"
                 flat
                 color="negative"
                 icon="delete"
               >
-                <q-tooltip>{{ `Eliminar al usuario ${props.row.nombreUsuario}` }}</q-tooltip>
+                <q-tooltip>{{ `Eliminar la venta de ${props?.row?.clienteId?.nombreCliente}` }}</q-tooltip>
               </q-btn>
             </q-td>
           </template>
@@ -63,7 +63,7 @@ import { useVentasStore } from 'src/stores/ventas'
 import { formatearFecha } from '../../helpers/formatearFecha'
 
 const useVenta = useVentasStore()
-const { obtenerVentas } = useVenta
+const { obtenerVentas, obtenerVentasId, eliminarVentas } = useVenta
 const { ventas } = storeToRefs(useVenta)
 
 const columns = [
@@ -134,18 +134,19 @@ const nuevoRegistroCompraCliente = () => {
 }
 
 const usuarioEditarId = (id) => {
-  // obtenerUsuariosId(id)
+  console.log(id)
+  obtenerVentasId(id)
   modalRegistroCompraCliente.value.abrir(false)
 }
 
-const confirmarEliminarUsuario = (usuario) => {
+const confirmarEliminarCompraCliente = (venta) => {
   notificacion.dialog({
-    title: `¿Deseas eliminar el ${usuario.nombreUsuario}?`,
+    title: `¿Deseas eliminar la venta del cliente ${venta?.clienteId?.nombreCliente}?`,
     message: 'Una vez le des en "ok" no se podrá recuperar del usuario',
     cancel: true,
     persistent: true
   }).onOk(() => {
-    // eliminarUsuarios(usuario._id)
+    eliminarVentas(venta._id)
   }).onCancel(() => {
     console.log('cancelando.....')
   })
