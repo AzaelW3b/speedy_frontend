@@ -29,9 +29,8 @@
             />
           </q-card-section>
         </div>
-
-        <div class="row q-my-sm" >
-          <q-card-section class="col-6 q-pt-none">
+         <div class="row q-my-sm">
+         <q-card-section class="col-6 q-pt-none">
             <label>Correo</label>
             <q-input
               v-model="clienteObj.correo"
@@ -62,7 +61,42 @@
                 </q-select>
 
           </q-card-section>
+         </div>
 
+          <div class="row q-my-sm">
+          <q-card-section class="col-6 q-pt-none">
+            <label>Número de cuenta</label>
+            <q-input
+              v-model="clienteObj.numeroCuenta"
+              label="Ingresa el nombre del cliente"
+              outlined
+
+              />
+          </q-card-section>
+          <q-card-section class="col-6 q-pt-none">
+            <label>Banco</label>
+             <q-select
+              outlined
+              v-model="clienteObj.banco"
+              use-input
+              input-debounce="0"
+              label="Selecciona el banco"
+              :options="options"
+              @filter="filterFn"
+              style="width: 250px"
+              >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    No results
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </q-card-section>
+        </div>
+
+        <div class="row q-my-sm" >
           <q-card-section class="col-6 q-pt-none">
             <label>¿Fue invitado por alguien?</label>
            <div>
@@ -128,6 +162,7 @@
 
           </q-card-section>
         </div>
+
         <q-card-actions align="right">
           <q-btn
             label="Guardar cliente"
@@ -146,6 +181,7 @@ import { useClientesStore } from 'src/stores/clientes'
 import { editarRegistros } from 'src/helpers/editarRegistros'
 import { storeToRefs } from 'pinia'
 import { filtradoBusquedaObj } from 'src/helpers/filtradoBusquedaObj'
+import { bancos } from '../../constants/bancos'
 
 export default {
   setup () {
@@ -163,7 +199,9 @@ export default {
       tipoMembresia: '',
       invitados: [],
       niveles: 0,
-      rol: 'socio'
+      rol: 'socio',
+      banco: '',
+      numeroCuenta: ''
 
     })
     const nuevoRegistro = ref(true)
@@ -182,6 +220,7 @@ export default {
       })
     })
     const clientesNuevos = ref(clientesOpciones.value)
+    const options = ref(bancos)
 
     const abrir = (esNuevoRegistro) => {
       const clienteNuevo = {
@@ -194,7 +233,9 @@ export default {
         tipoMembresia: '',
         invitados: [],
         niveles: 0,
-        rol: 'socio'
+        rol: 'socio',
+        banco: '',
+        numeroCuenta: ''
 
       }
       if (!esNuevoRegistro) {
@@ -219,6 +260,24 @@ export default {
       filtradoBusquedaObj(val, update, clientesOpciones.value, clientesNuevos)
     }
 
+    const filterFn = (val, update) => {
+      if (val === '') {
+        update(() => {
+          options.value = bancos
+
+          // with Quasar v1.7.4+
+          // here you have access to "ref" which
+          // is the Vue reference of the QSelect
+        })
+        return
+      }
+
+      update(() => {
+        const needle = val.toLowerCase()
+        options.value = bancos.filter(v => v.toLowerCase().indexOf(needle) > -1)
+      })
+    }
+
     return {
       // estados
       modalClientes,
@@ -227,8 +286,10 @@ export default {
       nuevoRegistro,
       isPassword,
       membresias,
+      options,
       // metodos
       abrir,
+      filterFn,
       guardarCliente,
       parametrosFiltradosClientes
 
