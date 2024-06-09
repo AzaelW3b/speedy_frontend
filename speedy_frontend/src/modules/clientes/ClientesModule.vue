@@ -126,6 +126,20 @@ const columns = [
     sortable: true
   },
   {
+    name: 'numeroCuenta',
+    label: 'Número de cuenta bancaria',
+    field: 'numeroCuenta',
+    align: 'left',
+    sortable: true
+  },
+  {
+    name: 'banco',
+    label: 'Banco',
+    field: 'banco',
+    align: 'left',
+    sortable: true
+  },
+  {
     name: 'acciones',
     label: 'Acciones',
     field: 'acciones',

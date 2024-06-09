@@ -6,6 +6,10 @@ import { mensajeUsuario } from 'src/helpers/mensajes'
 export const useClientesStore = defineStore('clientes', () => {
   const clientes = ref([])
   const cliente = ref(null)
+  const invitadosNivelUno = ref([])
+  const invitadosNivelDos = ref([])
+  const invitadosNivelTres = ref([])
+  const invitados = ref([])
 
   // guardar
   const guardarClientes = async (cliente) => {
@@ -67,7 +71,6 @@ export const useClientesStore = defineStore('clientes', () => {
   const obtenerClientes = async () => {
     try {
       const { data } = await api.get('/clientes')
-      console.log(data)
       clientes.value = data
     } catch (error) {
       mensajeUsuario('negative', `Error al obtener clientes favor de reportar a soporte. ${error}`)
@@ -100,15 +103,35 @@ export const useClientesStore = defineStore('clientes', () => {
     cliente.value = clientes.value.find(cliente => cliente._id === id)
     return cliente.value
   }
+
+  const obtenerInvitados = async (id) => {
+    try {
+      const { data } = await api.get(`/clientes/invitados/${id}`)
+      invitados.value = data
+      invitadosNivelUno.value = data?.filter(invitado => invitado.nivel === 1)
+      invitadosNivelDos.value = data?.filter(invitado => invitado.nivel === 2)
+      invitadosNivelTres.value = data?.filter(invitado => invitado.nivel === 3)
+      console.log(invitadosNivelUno.value)
+      console.log(invitadosNivelDos.value)
+      console.log(invitadosNivelTres.value)
+    } catch (error) {
+      console.log(error)
+    }
+  }
   return {
     // states
     clientes,
     cliente,
+    invitadosNivelUno,
+    invitadosNivelDos,
+    invitadosNivelTres,
+    invitados,
     // metodos
     guardarClientes,
     editarClientes,
     obtenerClientes,
     eliminarClientes,
-    obtenerClienteId
+    obtenerClienteId,
+    obtenerInvitados
   }
 })

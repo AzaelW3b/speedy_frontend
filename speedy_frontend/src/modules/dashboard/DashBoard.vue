@@ -59,7 +59,7 @@
         <q-card-section class="contenido-card">
           <span class="material-icons text-primary">person</span>
           <h3>Socios invitados</h3>
-          <p class="text-primary">{{ usuarioAutenticado?.usuario?.invitados.length }}</p>
+          <p class="text-primary">{{ invitados?.length }}</p>
         </q-card-section>
       </q-card>
 
@@ -84,123 +84,81 @@
       <q-separator color="primary" class="q-my-md" inset />
     </div>
     <div v-if="usuarioAutenticado?.usuario?.rol === 'socio'">
-      <q-card class="q-pa-md">
-        <div class="text-h2 text-center">Socio principal</div>
-        <q-card class="q-mt-md">
-          <q-card-section class="q-pa-md">
-            <div class="text-h3">{{ usuarioAutenticado?.usuario?.nombreCliente }}</div>
-            <div class="text-subtitle5 text-grey">Socio principal</div>
-          </q-card-section>
-          <div class="q-pa-md">
-              <q-table
-              grid
-              card-class="bg-primary text-white"
-              title="Mi piramide"
-              :rows="usuarioAutenticado?.usuario?.invitados"
-              :columns="columns"
-              row-key="name"
-              :filter="filter"
-              hide-header
-            >
-              <template v-slot:top-right>
-                <q-input borderless dense debounce="300" v-model="filter" placeholder="Buscar invitado">
-                  <template v-slot:append>
-                    <q-icon name="search" />
-                  </template>
-                </q-input>
-              </template>
-            </q-table>
-          </div>
-        </q-card>
-      </q-card>
-
+      <div class="q-pa-md">
+        <h1 class="text-h3 text-center">{{ usuarioAutenticado?.usuario?.nombreCliente }}</h1>
+          <p class="text-subtitle5 text-grey text-center">Socio principal</p>
+        </div>
+        <p class="text-h3" v-if="invitadosNivelUno.length === 0 && invitadosNivelDos.length === 0 && invitadosNivelTres.length === 0">Aún no tienes invitados.</p>
+        <div v-if="invitadosNivelUno.length > 0">
+          <p class="text-h3">Socios nivel 1</p>
+          <div class="contenedor-cards-socios">
+            <q-card class="q-mt-md q-pa-md border-card" v-for="invitadoNivelUno in invitadosNivelUno" :key="invitadoNivelUno._id">
+              <p class="text-h4"> <b>Nombre: </b>{{ invitadoNivelUno.cliente?.nombreCliente }}</p>
+              <p class="text-h4"> <b>Teléfono: </b>{{ invitadoNivelUno.cliente?.telefono }}</p>
+              <p class="text-h4"> <b>Correo: </b>{{ invitadoNivelUno.cliente?.correo }}</p>
+              <p class="text-h4"> <b>Membresia: </b>{{ invitadoNivelUno.cliente?.tipoMembresia }}</p>
+              <p class="text-subtitle4"><b>Invitado por:</b> {{ buscarCliente(invitadoNivelUno?.cliente?.invitadoPor) }}</p>
+            </q-card>
+           </div>
+        </div>
+         <div class="q-mt-md"  v-if="invitadosNivelDos.length > 0">
+          <p class="text-h3">Socios nivel 2</p>
+          <div class="contenedor-cards-socios">
+            <q-card class="q-mt-md q-pa-md border-card" v-for="invitadoNivelDos in invitadosNivelDos" :key="invitadoNivelDos._id">
+              <p class="text-h4"> <b>Nombre: </b>{{ invitadoNivelDos.cliente?.nombreCliente }}</p>
+              <p class="text-h4"> <b>Teléfono: </b>{{ invitadoNivelDos.cliente?.telefono }}</p>
+              <p class="text-h4"> <b>Correo: </b>{{ invitadoNivelDos.cliente?.correo }}</p>
+              <p class="text-h4"> <b>Membresia: </b>{{ invitadoNivelDos.cliente?.tipoMembresia }}</p>
+              <p class="text-subtitle4"><b>Invitado por:</b> {{ buscarCliente(invitadoNivelDos?.cliente?.invitadoPor) }}</p>
+            </q-card>
+           </div>
+        </div>
+         <div class="q-mt-md" v-if="invitadosNivelTres.length > 0">
+          <p class="text-h3">Socios nivel 3</p>
+          <div class="contenedor-cards-socios">
+            <q-card class="q-mt-md q-pa-md border-card" v-for="invitadoNivelTres in invitadosNivelTres" :key="invitadoNivelTres._id">
+              <p class="text-h4"> <b>Nombre: </b>{{ invitadoNivelTres.cliente?.nombreCliente }}</p>
+              <p class="text-h4"> <b>Teléfono: </b>{{ invitadoNivelTres.cliente?.telefono }}</p>
+              <p class="text-h4"> <b>Correo: </b>{{ invitadoNivelTres.cliente?.correo }}</p>
+              <p class="text-h4"> <b>Membresia: </b>{{ invitadoNivelTres.cliente?.tipoMembresia }}</p>
+              <p class="text-subtitle4"><b>Invitado por:</b> {{ buscarCliente(invitadoNivelTres?.cliente?.invitadoPor) }}</p>
+            </q-card>
+           </div>
+        </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { useClientesStore } from 'src/stores/clientes'
-// import { useProductosStore } from 'src/stores/productos'
 import { useVentasStore } from 'src/stores/ventas'
 import { useAutenticacionStore } from 'src/stores/autenticaciones'
 import { onMounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 
 const useCliente = useClientesStore()
-const { clientes } = storeToRefs(useCliente)
+const { obtenerInvitados } = useCliente
+const { clientes, invitadosNivelUno, invitadosNivelDos, invitadosNivelTres, invitados } = storeToRefs(useCliente)
 
 const useAutenticacion = useAutenticacionStore()
+const { autenticarUsuario } = useAutenticacion
 const { usuarioAutenticado } = storeToRefs(useAutenticacion)
 
 const useVenta = useVentasStore()
 const { obtenerVentaDia } = useVenta
 const { ventaDia, ventasCliente } = storeToRefs(useVenta)
-const filter = ref('')
 const formatoMoneda = ref(new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }))
-const columns = ref([
-  {
-    name: 'nombreCliente',
-    required: true,
-    label: 'Invitados',
-    align: 'left',
-    field: row => row?.cliente?.nombreCliente,
-    format: val => `${val}`,
-    sortable: true
-  },
-  {
-    name: 'correo',
-    required: true,
-    label: 'Correo',
-    align: 'left',
-    field: row => row?.cliente?.correo,
-    format: val => `${val}`,
-    sortable: true
-  },
-  {
-    name: 'telefono',
-    required: true,
-    label: 'Telefono',
-    align: 'left',
-    field: row => row?.cliente?.telefono,
-    format: val => `${val}`,
-    sortable: true
-  },
-  {
-    name: 'tipoMembresia',
-    required: true,
-    label: 'Tipo de membresia',
-    align: 'left',
-    field: row => row?.cliente?.tipoMembresia,
-    format: val => `${val}`,
-    sortable: true
-  },
-  {
-    name: 'invitados',
-    required: true,
-    label: 'Cantidad que han invitado',
-    align: 'left',
-    field: row => row?.cliente?.invitados?.length,
-    format: val => `${val}`,
-    sortable: true
-  },
-  {
-    name: 'invitadoPor',
-    required: true,
-    label: 'Invitado por',
-    align: 'left',
-    field: row => buscarCliente(row?.cliente?.invitadoPor),
-    format: val => `${val}`,
-    sortable: true
-  }
-
-])
 
 const buscarCliente = (id) => {
   const cliente = clientes.value.find(cliente => cliente._id === id)
   return cliente?.nombreCliente
 }
-onMounted(() => {
+onMounted(async () => {
+  await autenticarUsuario()
   obtenerVentaDia()
+  if (usuarioAutenticado?.value?.usuario?.rol === 'socio') {
+    obtenerInvitados(usuarioAutenticado?.value?.usuario?._id)
+  }
 })
 </script>
 
