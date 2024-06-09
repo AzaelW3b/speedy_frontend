@@ -90,6 +90,7 @@ export const useVentasStore = defineStore('ventas', () => {
   const obtenerVentasClienteId = async (id) => {
     try {
       const { data } = await api.get(`/ventas/ventasClienteId/${id}`)
+      console.log(data)
       ventasClienteId.value = data
     } catch (error) {
       mensajeUsuario('negative', `Algo fallo al obtener las ventas del cliente, favor de reportar a soporte. ${error}`)

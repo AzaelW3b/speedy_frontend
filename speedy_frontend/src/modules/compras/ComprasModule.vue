@@ -86,38 +86,45 @@ const columns = [
   {
     name: 'cliente',
     label: 'Cliente',
-    field: row => obtenerClienteVenta(row?.clienteId),
+    field: row => row?.clienteId?.nombreCliente,
     align: 'left',
     sortable: true
   },
   {
-    name: 'productos',
-    label: 'Total de productos comprados',
-    field: row => row?.productos?.reduce((suma, producto) => suma + producto.cantidad, 0),
+    name: 'tipoMembresia',
+    label: 'Tipo de membresia',
+    field: 'tipoMembresia',
     align: 'left',
     sortable: true
   },
   {
     name: 'total',
     label: 'Total del compra',
-    field: row => formatoMoneda.value.format(row.total),
+    field: row => formatoMoneda.value.format(row.totalCompra),
     align: 'left',
     sortable: true
   },
   {
-    name: 'fecha',
+    name: 'cashback',
+    label: 'Bono residual',
+    field: row => formatoMoneda.value.format(row.cashback),
+    align: 'left',
+    sortable: true
+  },
+  {
+    name: 'cashback',
     label: 'Fecha de compra',
     field: row => formatearFecha(row.fecha),
     align: 'left',
     sortable: true
-  },
-  {
-    name: 'acciones',
-    label: 'Ver mis tickets',
-    field: 'acciones',
-    align: 'left',
-    sortable: true
   }
+  // {
+  //   name: 'acciones',
+  //   label: 'Ver mis tickets',
+  //   field: 'acciones',
+  //   align: 'left',
+  //   sortable: true
+  // }
 ]
 console.log(ventasClienteId)
 onMounted(() => obtenerVentasClienteId(usuarioAutenticado?.value?.usuario?._id))
@@ -133,7 +140,7 @@ const verCompraCliente = (venta) => {
 }
 
 const ventasTotales = () => {
-  const total = ventasClienteId?.value?.reduce((suma, venta) => venta.total + suma, 0)
+  const total = ventasClienteId?.value?.reduce((suma, venta) => venta.totalCompra + suma, 0)
   return total
 }
 
